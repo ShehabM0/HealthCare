@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.10
 COPY .  /usr/src/app
 WORKDIR /usr/src/app
 RUN pip install --upgrade pip && pip install -r requirements.txt
