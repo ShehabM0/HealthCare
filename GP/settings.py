@@ -72,6 +72,8 @@ TEMPLATES = [
     },
 ]
 
+ALLOWED_HOSTS = ['*']
+
 WSGI_APPLICATION = 'GP.wsgi.application'
 
 
