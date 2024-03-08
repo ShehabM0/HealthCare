@@ -31,3 +31,13 @@ class RegisterSerializer(serializers.Serializer):
         if data['phone'][0:2] != '01':
             raise ValidationError("Phone number must start with 01")
         return data
+    
+class PreserveClinicSerializer(serializers.Serializer):
+    clinic_id = serializers.IntegerField()
+    working_hour_id = serializers.IntegerField()
+
+class ReservationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservations
+        fields = '__all__'
+        depth = 1

@@ -30,3 +30,11 @@ class User(AbstractUser):
     # phone = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     status = models.CharField(max_length=1,choices=STATUS_TYPES, default='S')
+    clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class Reservations(models.Model):
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
+    clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True)
+    working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)
+    number_in_qeue = models.IntegerField(default=1)
