@@ -31,3 +31,22 @@ class RegisterSerializer(serializers.Serializer):
         if data['phone'][0:2] != '01':
             raise ValidationError("Phone number must start with 01")
         return data
+    
+class PreserveClinicSerializer(serializers.Serializer):
+    clinic_id = serializers.IntegerField()
+    working_hour_id = serializers.IntegerField()
+
+class ReservationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservations
+        fields = '__all__'
+        depth = 1
+
+class UploadMedicalRecordSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    type = serializers.CharField(max_length=1)
+
+    def validate (self, data):
+        if data['type'] not in ['P', 'R', 'I', 'A']:
+            raise ValidationError("Invalid type")
+        return data
