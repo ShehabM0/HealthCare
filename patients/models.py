@@ -38,3 +38,23 @@ class Reservations(models.Model):
     clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True)
     working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)
     number_in_qeue = models.IntegerField(default=1)
+
+class MedicalHistory(models.Model):
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_history')
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor')
+    disease = models.CharField(max_length=100)
+    treatment = models.CharField(max_length=100)
+    date = models.DateField()
+    description = models.TextField()
+
+class MedicalRecord(models.Model):
+    FILE_TYPES = [
+        ('P', 'Prescription'),
+        ('R', 'Report'),
+        ('I', 'Image'),
+        ('A', 'Analysis'),
+    ]
+    patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_record')
+    file = models.FileField(upload_to='medical_records', null=True, blank=True)
+    type = models.CharField(max_length=1, choices=FILE_TYPES, default='P')
+    

@@ -74,3 +74,17 @@ class ReservationsView(APIView):
         serializer = ReservationsSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class UploadMedicalRecord(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    @swagger_auto_schema(request_body=UploadMedicalRecordSerializer)
+    def post(self, request):
+        serializer = UploadMedicalRecordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        medical_record = MedicalRecord(
+            patient=request.user,
+            file=request.data['file'],
+            type=request.data['type']
+        )
+        medical_record.save()
+        return Response({"message": "Medical record uploaded successfully"}, status=status.HTTP_200_OK)

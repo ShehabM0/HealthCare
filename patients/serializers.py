@@ -41,3 +41,12 @@ class ReservationsSerializer(serializers.ModelSerializer):
         model = Reservations
         fields = '__all__'
         depth = 1
+
+class UploadMedicalRecordSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    type = serializers.CharField(max_length=1)
+
+    def validate (self, data):
+        if data['type'] not in ['P', 'R', 'I', 'A']:
+            raise ValidationError("Invalid type")
+        return data
