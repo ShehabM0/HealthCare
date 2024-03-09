@@ -39,7 +39,7 @@ def CreateUserView(req):
             type = user_type,
         )
         user.save()
-        # SendEmail(data['first_name'], data['email'], user_pass)
+        SendEmail(data['first_name'], data['email'], user_pass)
         return Response({"message": "User created successfully, check your email."}, status=status.HTTP_201_CREATED)
     except IntegrityError:
         return Response({"message": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
