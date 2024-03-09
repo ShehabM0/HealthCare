@@ -14,14 +14,59 @@ class User(AbstractUser):
     GENDER_TYPES = [
         ('M', 'Male'),
         ('F' , 'Female'),
-        ]
+    ]
     STATUS_TYPES = [
         ('M', 'Maried'),
         ('S','Single'),
         ('W','widow'),
         ('D','devorced')
     ]
+    SPEC_TYPES = [
+        ('AnatomicalPathology', 'AnatomicalPathology'),
+        ('Anesthesiology', 'Anesthesiology'),
+        ('Cardiology', 'Cardiology'),
+        ('Cardiovascular/ThoracicSurgery', 'Cardiovascular/ThoracicSurgery'),
+        ('ClinicalImmunology/Allergy', 'ClinicalImmunology/Allergy'),
+        ('CriticalCareMedicine', 'CriticalCareMedicine'),
+        ('Dermatology', 'Dermatology'),
+        ('DiagnosticRadiology', 'DiagnosticRadiology'),
+        ('EmergencyMedicine', 'EmergencyMedicine'),
+        ('EndocrinologyandMetabolism', 'EndocrinologyandMetabolism'),
+        ('FamilyMedicine', 'FamilyMedicine'),
+        ('Gastroenterology', 'Gastroenterology'),
+        ('GeneralInternalMedicine', 'GeneralInternalMedicine'),
+        ('GeneralSurgery', 'GeneralSurgery'),
+        ('General/ClinicalPathology', 'General/ClinicalPathology'),
+        ('GeriatricMedicine', 'GeriatricMedicine'),
+        ('Hematology', 'Hematology'),
+        ('MedicalBiochemistry', 'MedicalBiochemistry'),
+        ('MedicalGenetics', 'MedicalGenetics'),
+        ('MedicalMicrobiologyandInfectiousDiseases', 'MedicalMicrobiologyandInfectiousDiseases'),
+        ('MedicalOncology', 'MedicalOncology'),
+        ('Nephrology', 'Nephrology'),
+        ('Neurology', 'Neurology'),
+        ('Neurosurgery', 'Neurosurgery'),
+        ('NuclearMedicine', 'NuclearMedicine'),
+        ('Obstetrics/Gynecology', 'Obstetrics/Gynecology'),
+        ('OccupationalMedicine', 'OccupationalMedicine'),
+        ('Ophthalmology', 'Ophthalmology'),
+        ('OrthopedicSurgery', 'OrthopedicSurgery'),
+        ('Otolaryngology', 'Otolaryngology'),
+        ('Pediatrics', 'Pediatrics'),
+        ('PhysicalMedicineandRehabilitation', 'PhysicalMedicineandRehabilitation'),
+        ('PlasticSurgery', 'PlasticSurgery'),
+        ('Psychiatry', 'Psychiatry'),
+        ('PublicHealthandPreventiveMedicine', 'PublicHealthandPreventiveMedicine'),
+        ('RadiationOncology', 'RadiationOncology'),
+        ('Respirology', 'Respirology'),
+        ('Rheumatology', 'Rheumatology'),
+        ('Urology', 'Urology'),
+    ]
+
     type = models.CharField(max_length=2, choices=USER_TYPES, default='P')
+    status = models.CharField(max_length=1, choices=STATUS_TYPES, default='S')
+    specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
+
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     gender = models.CharField(max_length=1,choices=GENDER_TYPES, default='M')
@@ -29,7 +74,6 @@ class User(AbstractUser):
     date_of_birth = models.DateField( null=True, blank=True)
     # phone = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
-    status = models.CharField(max_length=1,choices=STATUS_TYPES, default='S')
     clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
 
 
