@@ -87,6 +87,9 @@ class User(AbstractUser):
     # phone = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
+    ssn = models.CharField(max_length=9, null=True)
+    insurance_number = models.CharField(max_length=14, null=True)
+    blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+')
 
     specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
     ssn = models.CharField(max_length=9, null=True)

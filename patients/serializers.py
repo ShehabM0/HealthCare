@@ -16,10 +16,9 @@ class RegisterSerializer(serializers.Serializer):
     confirm_password = serializers.CharField(max_length=30)
     gender = serializers.CharField(max_length=1)
     status = serializers.CharField(max_length=1)
-
-    ssn = serializers.CharField(min_length=9)
-    national_card_number = serializers.CharField(min_length=14)
-    blood = serializers.CharField(min_length=1, max_length=3)
+    blood = serializers.CharField(max_length=3)
+    ssn = serializers.CharField(max_length=14)
+    insurance_number = serializers.CharField(max_length=14)
 
     def validate( self, data):
         if data['password'] != data['confirm_password']:
@@ -37,7 +36,7 @@ class RegisterSerializer(serializers.Serializer):
         
         if len(data['ssn']) != 9:
             raise ValidationError("Social Security number must be 9 digits.")
-        if len(data['national_card_number']) != 14:
+        if len(data['insurance_number']) != 14:
             raise ValidationError("National Card number must be 14 digits.")
         return data
     

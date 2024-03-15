@@ -34,7 +34,7 @@ class Register_view(APIView):
                     status=serializer.data['status'],
                     username = serializer.data['phone'],
                     ssn = serializer.data['ssn'],
-                    national_card_number = serializer.data['national_card_number'],
+                    insurance_number = serializer.data['insurance_number'],
                     blood = serializer.data['blood']
                 )
                 user.save()
