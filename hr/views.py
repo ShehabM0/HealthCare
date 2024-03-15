@@ -36,7 +36,7 @@ def CreateUserView(req):
             date_of_birth=serializer.data['date_of_birth'],
             address=serializer.data['address'],
             ssn = serializer.data['ssn'],
-            national_card_number = serializer.data['national_card_number'],
+            insurance_number = serializer.data['insurance_number'],
 
             status=serializer.data['status'],
             specialization=serializer.data['specialization'],
