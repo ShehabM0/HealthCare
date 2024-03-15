@@ -17,6 +17,10 @@ class RegisterSerializer(serializers.Serializer):
     gender = serializers.CharField(max_length=1)
     status = serializers.CharField(max_length=1)
 
+    ssn = serializers.CharField(min_length=9)
+    national_card_number = serializers.CharField(min_length=14)
+    blood = serializers.CharField(min_length=1, max_length=3)
+
     def validate( self, data):
         if data['password'] != data['confirm_password']:
             raise ValidationError("Password and Confirm Password does not match")
@@ -30,6 +34,11 @@ class RegisterSerializer(serializers.Serializer):
             raise ValidationError("Phone number must be at least 11 characters.")
         if data['phone'][0:2] != '01':
             raise ValidationError("Phone number must start with 01")
+        
+        if len(data['ssn']) != 9:
+            raise ValidationError("Social Security number must be 9 digits.")
+        if len(data['national_card_number']) != 14:
+            raise ValidationError("National Card number must be 14 digits.")
         return data
     
 class PreserveClinicSerializer(serializers.Serializer):

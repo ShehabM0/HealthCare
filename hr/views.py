@@ -31,12 +31,19 @@ def CreateUserView(req):
             email=serializer.data['email'],
             first_name=serializer.data['first_name'],
             last_name=serializer.data['last_name'],
+            username = serializer.data['phone'],
+
             date_of_birth=serializer.data['date_of_birth'],
             address=serializer.data['address'],
-            username = serializer.data['phone'],
-            password = user_pass,
+            ssn = serializer.data['ssn'],
+            national_card_number = serializer.data['national_card_number'],
+
             status=serializer.data['status'],
             specialization=serializer.data['specialization'],
+            gender=serializer.data['gender'],
+            blood = serializer.data['blood'],
+
+            password = user_pass,
             type = user_type,
         )
         user.save()

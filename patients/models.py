@@ -63,18 +63,35 @@ class User(AbstractUser):
         ('Urology', 'Urology'),
     ]
 
+    BLOOD_TYPES = [
+        ('O', 'O'),
+        ('A', 'A'),
+        ('B', 'B'),
+        ('AB', 'AB'),
+        ('O+', 'O+'),
+        ('A-', 'A-'),
+        ('A+', 'A+'),
+        ('B-', 'B-'),
+        ('B+', 'B+'),
+        ('AB-', 'AB-'),
+        ('AB+', 'AB+'),
+    ]
+
     type = models.CharField(max_length=2, choices=USER_TYPES, default='P')
     status = models.CharField(max_length=1, choices=STATUS_TYPES, default='S')
-    specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
-
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     gender = models.CharField(max_length=1,choices=GENDER_TYPES, default='M')
     email = models.EmailField(unique=True)
-    date_of_birth = models.DateField( null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
     # phone = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
+
+    specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
+    ssn = models.CharField(max_length=9, null=True)
+    national_card_number = models.CharField(max_length=14, null=True)
+    blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+', null=True)
 
 
 class Reservations(models.Model):

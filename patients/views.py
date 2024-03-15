@@ -33,6 +33,9 @@ class Register_view(APIView):
                     type=serializer.data['type'],
                     status=serializer.data['status'],
                     username = serializer.data['phone'],
+                    ssn = serializer.data['ssn'],
+                    national_card_number = serializer.data['national_card_number'],
+                    blood = serializer.data['blood']
                 )
                 user.save()
                 return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
