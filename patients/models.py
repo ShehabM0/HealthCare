@@ -10,6 +10,7 @@ class User(AbstractUser):
         ('D', 'Doctor'),
         ('A', 'Admin'),
         ('N', 'Nurse'),
+        ('H', 'Human Resources')
     ]
     GENDER_TYPES = [
         ('M', 'Male'),

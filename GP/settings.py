@@ -35,11 +35,10 @@ ALLOWED_HOSTS = []
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Allow specific domains to access your API
-# CORS_ALLOWED_ORIGINS = [
-#     'https://madinty.onrender.com',
-#     'http://127.0.0.1:8000',
-#     # Add more domains as needed
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'https://gp-mvz0.onrender.com',
+    'http://127.0.0.1:8000',
+]
 
 
 # Allow specific HTTP methods
