@@ -46,7 +46,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path("patients/",include('patients.urls')),
+    path('patients/',include('patients.urls')),
+    path('users/', include('users.urls')),
     path('hr/', include('hr.urls')),
          
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
