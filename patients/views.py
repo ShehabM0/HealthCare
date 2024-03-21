@@ -24,18 +24,11 @@ class Register_view(APIView):
         if serializer.is_valid():
             try:
                 user = User.objects.create_user(
-                    email=serializer.data['email'],
                     first_name=serializer.data['first_name'],
                     last_name=serializer.data['last_name'],
-                    date_of_birth=serializer.data['date_of_birth'],
-                    address=serializer.data['address'],
+                    email=serializer.data['email'],
                     password=serializer.data['password'],
-                    type=serializer.data['type'],
-                    status=serializer.data['status'],
                     username = serializer.data['phone'],
-                    ssn = serializer.data['ssn'],
-                    insurance_number = serializer.data['insurance_number'],
-                    blood = serializer.data['blood']
                 )
                 user.save()
                 return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
@@ -91,3 +84,13 @@ class UploadMedicalRecord(APIView):
         )
         medical_record.save()
         return Response({"message": "Medical record uploaded successfully"}, status=status.HTTP_200_OK)
+
+'''
+date_of_birth=serializer.data['date_of_birth'],
+address=serializer.data['address'],
+type=serializer.data['type'],
+status=serializer.data['status'],
+ssn = serializer.data['ssn'],
+insurance_number = serializer.data['insurance_number'],
+blood = serializer.data['blood']
+'''

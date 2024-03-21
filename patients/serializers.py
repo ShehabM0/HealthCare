@@ -5,20 +5,12 @@ from rest_framework.response import Response
 
 
 class RegisterSerializer(serializers.Serializer):
-    type = serializers.CharField(max_length=1)
     first_name = serializers.CharField(max_length=30)
     last_name = serializers.CharField(max_length=30)
     email = serializers.EmailField()
-    date_of_birth = serializers.DateField()
-    phone = serializers.CharField(max_length=15)
-    address = serializers.CharField(max_length=100)
     password = serializers.CharField(max_length=30)
     confirm_password = serializers.CharField(max_length=30)
-    gender = serializers.CharField(max_length=1)
-    status = serializers.CharField(max_length=1)
-    blood = serializers.CharField(max_length=3)
-    ssn = serializers.CharField(max_length=14)
-    insurance_number = serializers.CharField(max_length=14)
+    phone = serializers.CharField(max_length=15)
 
     def validate( self, data):
         if data['password'] != data['confirm_password']:
@@ -33,11 +25,6 @@ class RegisterSerializer(serializers.Serializer):
             raise ValidationError("Phone number must be at least 11 characters.")
         if data['phone'][0:2] != '01':
             raise ValidationError("Phone number must start with 01")
-        
-        if len(data['ssn']) != 9:
-            raise ValidationError("Social Security number must be 9 digits.")
-        if len(data['insurance_number']) != 14:
-            raise ValidationError("National Card number must be 14 digits.")
         return data
     
 class PreserveClinicSerializer(serializers.Serializer):
@@ -58,3 +45,21 @@ class UploadMedicalRecordSerializer(serializers.Serializer):
         if data['type'] not in ['P', 'R', 'I', 'A']:
             raise ValidationError("Invalid type")
         return data
+    
+'''
+date_of_birth = serializers.DateField()
+type = serializers.CharField(max_length=1)
+address = serializers.CharField(max_length=100)
+gender = serializers.CharField(max_length=1)
+status = serializers.CharField(max_length=1)
+blood = serializers.CharField(max_length=3)
+ssn = serializers.CharField(min_length=14)
+insurance_number = serializers.CharField(min_length=9)
+
+if len(data['ssn']) != 14:
+    raise ValidationError("Social Security number must be 14 digits.")
+if len(data['insurance_number']) != 9:
+    raise ValidationError("Insurance number must be 9 digits.")
+''' 
+
+

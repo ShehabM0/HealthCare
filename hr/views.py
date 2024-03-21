@@ -4,7 +4,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from django.core.paginator import Paginator
-from rest_framework.views import APIView
 from django.db import IntegrityError
 from patients.models import User
 from .serializers import *
@@ -52,32 +51,3 @@ def CreateUserView(req):
     except IntegrityError:
         return Response({"message": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-@swagger_auto_schema(method='GET')
-@api_view(['GET'])
-def ListEmployeesView(req, type=None):
-    if type: employees = User.objects.filter(type=type[0].upper())
-    else: employees = User.objects.all()
-    
-    req_page_number = req.GET.get("page")
-    if not req_page_number:
-        serializer = UserSerializer(employees, many=True)
-        return Response({"data": serializer.data, "count": len(serializer.data)})
-    
-    paginator = Paginator(employees, 10)
-    page_number = int(req_page_number)
-    page_obj = paginator.get_page(page_number)
-    serializer = UserSerializer(page_obj, many=True)
-
-    if page_number > paginator.num_pages:
-        return Response({"data": [], "count": 0}, status=status.HTTP_404_NOT_FOUND)
-    return Response({"data": serializer.data, "count": len(serializer.data)})
-
-@swagger_auto_schema(method='GET')
-@api_view(['GET'])
-def GetProfile(req, pk):
-    try:
-        data = User.objects.get(id=pk)
-    except User.DoesNotExist:
-        return Response({"message": "User doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
-    serializer = UserSerializer(data)
-    return Response({"message": serializer.data})
