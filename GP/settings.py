@@ -68,6 +68,7 @@ CORS_MAX_AGE = 86400  # 24 hours
 # Application definition
 
 INSTALLED_APPS = [
+    'verification_code',
     'patients',
     'doctors',
     'nurses',
@@ -101,7 +102,9 @@ ROOT_URLCONF = 'GP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'common/templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -154,11 +157,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT-2'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTH_USER_MODEL = 'patients.User'
 # Static files (CSS, JavaScript, Images)

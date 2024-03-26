@@ -46,6 +46,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path('verification-code/', include('verification_code.urls')),
     path('patients/',include('patients.urls')),
     path('users/', include('users.urls')),
     path('hr/', include('hr.urls')),
