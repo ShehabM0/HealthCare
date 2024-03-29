@@ -31,12 +31,48 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+# Allow all domains to access your API (not recommended for production)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Allow specific domains to access your API
+CORS_ALLOWED_ORIGINS = [
+    'https://gp-mvz0.onrender.com',
+    'http://127.0.0.1:8000',
+    # Add more domains as needed
+]
+
+
+# Allow specific HTTP methods
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+
+# Allow specific HTTP headers
+CORS_ALLOW_HEADERS = [
+    "Authorization",
+    "Content-Type",
+]
+
+# Allow cookies to be included in cross-origin requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Set the maximum age of the CORS preflight request cache
+CORS_MAX_AGE = 86400  # 24 hours
+
+
 # Application definition
 
 INSTALLED_APPS = [
+    'verification_code',
     'patients',
     'doctors',
     'nurses',
+    'users',
     'hr',
 
     'django.contrib.admin',
@@ -66,7 +102,9 @@ ROOT_URLCONF = 'GP.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'common/templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,11 +157,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT-2'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTH_USER_MODEL = 'patients.User'
 # Static files (CSS, JavaScript, Images)
