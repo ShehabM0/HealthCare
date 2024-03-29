@@ -52,6 +52,7 @@ def CreateUserView(req):
             userEmail=data['email'],
             userPass=user_pass,
             code=None,
+            expire_time=None,
             htmlFile="hr_account_creation.html"
         )
         return Response({"message": "User created successfully, check your email."}, status=status.HTTP_201_CREATED)
