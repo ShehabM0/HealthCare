@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import JsonResponse
 from .models import *
 from django.http import JsonResponse
@@ -12,7 +13,18 @@ from rest_framework.views import APIView
 from doctors.models import Clinic
 from doctors.models import *
 
+class ValidateRegister_view(APIView):
+    permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(request_body=RegisterSerializer)
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        user_exist = User.objects.filter(Q(username=serializer.data['phone']) | Q(email=serializer.data['email'])).exists()
+        if user_exist:
+            return Response({"message": "User already exists"}, status=status.HTTP_409_CONFLICT)
+        return Response({"message": "Valid data"}, status=status.HTTP_200_OK)
 
 
 class Register_view(APIView):
@@ -33,7 +45,7 @@ class Register_view(APIView):
                 user.save()
                 return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
             except IntegrityError:
-                return Response({"message": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "User already exists"}, status=status.HHTTP_409_CONFLICT)
         else:
             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         

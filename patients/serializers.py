@@ -14,17 +14,17 @@ class RegisterSerializer(serializers.Serializer):
 
     def validate( self, data):
         if data['password'] != data['confirm_password']:
-            raise ValidationError("Password and Confirm Password does not match")
+            raise ValidationError({"confirm_password": "Password and Confirm Password does not match"})
         if len(data['first_name']) < 2:
-            raise ValidationError("First name must be at least 2 characters.")
+            raise ValidationError({"first_name": "First name must be at least 2 characters."})
         if len(data['last_name']) < 2:
-            raise ValidationError("Last name must be at least 2 characters.")
+            raise ValidationError({"last_name": "Last name must be at least 2 characters."})
         if len(data['password']) < 8:
-            raise ValidationError("Password must be at least 8 characters.")
+            raise ValidationError({"password": "Password must be at least 8 characters."})
         if len(data['phone']) < 11:
-            raise ValidationError("Phone number must be at least 11 characters.")
+            raise ValidationError({"phone": "Phone number must be at least 11 characters."})
         if data['phone'][0:2] != '01':
-            raise ValidationError("Phone number must start with 01")
+            raise ValidationError({"phone": "Phone number must start with 01"})
         return data
     
 class PreserveClinicSerializer(serializers.Serializer):
