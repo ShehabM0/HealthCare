@@ -48,6 +48,7 @@ urlpatterns = [
 
     path("patients/",include('patients.urls')),
     path('hr/', include('hr.urls')),
+    path('nurses/', include('nurses.urls')), 
          
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
