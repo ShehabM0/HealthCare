@@ -69,15 +69,8 @@ def VerifyCode(req):
     start_str=(serializer.data)['created_at']
     start_date = datetime.strptime(start_str, '%Y-%m-%dT%H:%M:%S.%f')
     interval=datetime.now()- timedelta(days=1)
-    print(start_date)
-    print(interval)
     if start_date < interval:
         return Response({"message": "Expired verification code, please requset another one!"}, status=status.HTTP_410_GONE)
 
-    return Response({"message": "Valid"})
+    return Response({"message": "Valid code"}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def ListVerificationCodes(req):
-    list = VerificationCode.objects.all()
-    serializer = GetCodeSerializer(list, many=True)
-    return Response({"data": serializer.data})
