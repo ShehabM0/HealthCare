@@ -46,6 +46,11 @@ class UploadMedicalRecordSerializer(serializers.Serializer):
             raise ValidationError("Invalid type")
         return data
     
+class UpdateDeleteProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+    
 '''
 date_of_birth = serializers.DateField()
 type = serializers.CharField(max_length=1)

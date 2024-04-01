@@ -12,6 +12,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from doctors.models import Clinic
 from doctors.models import *
+from rest_framework import generics
+
 
 class ValidateRegister_view(APIView):
     permission_classes = [permissions.AllowAny]
@@ -106,3 +108,11 @@ ssn = serializer.data['ssn'],
 insurance_number = serializer.data['insurance_number'],
 blood = serializer.data['blood']
 '''
+
+class UpdateDeleteProfileView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UpdateDeleteProfileSerializer
+    queryset = User.objects.all()
+
+    def get_object(self):
+        return self.request.user

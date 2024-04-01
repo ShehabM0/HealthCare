@@ -4,11 +4,26 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-djangorestframework = "*"
-drf-yasg = "*"
-djangorestframework-simplejwt = "*"
-python-dotenv = "*"
+django = "==5.0.3"
+djangorestframework = "==3.14.0"
+drf-yasg = "==1.21.7"
+djangorestframework-simplejwt = "==5.3.1"
+python-dotenv = "==1.0.1"
+django-cors-headers = "==4.3.1"
+asgiref = "==3.7.2"
+cffi = "==1.16.0"
+cryptography = "==42.0.5"
+dj-database-url = "==2.1.0"
+inflection = "==0.5.1"
+packaging = "==24.0"
+pycparser = "==2.21"
+pyjwt = "==2.8.0"
+pytz = "==2024.1"
+pyyaml = "==6.0.1"
+sqlparse = "==0.4.4"
+typing-extensions = "==4.10.0"
+uritemplate = "==4.1.1"
+psycopg2 = "*"
 
 [dev-packages]
 
