@@ -67,7 +67,7 @@ def VerifyCode(req):
     serializer = GetCodeSerializer(obj, many=False)
 
     start_str=(serializer.data)['created_at']
-    start_date = datetime.strptime(start_str, '%Y-%m-%dT%H:%M:%S.%f')
+    start_date = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S.%f')
     interval=datetime.now()- timedelta(days=1)
     if start_date < interval:
         return Response({"message": "Expired verification code, please requset another one!"}, status=status.HTTP_410_GONE)
