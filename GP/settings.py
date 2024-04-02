@@ -32,40 +32,6 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Allow all domains to access your API (not recommended for production)
-CORS_ALLOW_ALL_ORIGINS = True
-
-# Allow specific domains to access your API
-CORS_ALLOWED_ORIGINS = [
-    'https://gp-mvz0.onrender.com',
-    'http://127.0.0.1:8000',
-    # Add more domains as needed
-]
-
-
-# Allow specific HTTP methods
-CORS_ALLOW_METHODS = [
-    "GET",
-    "POST",
-    "PUT",
-    "PATCH",
-    "DELETE",
-    "OPTIONS",
-]
-
-# Allow specific HTTP headers
-CORS_ALLOW_HEADERS = [
-    "Authorization",
-    "Content-Type",
-]
-
-# Allow cookies to be included in cross-origin requests
-CORS_ALLOW_CREDENTIALS = True
-
-# Set the maximum age of the CORS preflight request cache
-CORS_MAX_AGE = 86400  # 24 hours
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -122,6 +88,39 @@ TEMPLATES = [
 ]
 
 ALLOWED_HOSTS = ['*']
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Allow specific domains to access your API
+CORS_ALLOWED_ORIGINS = [
+    'https://gp-mvz0.onrender.com',
+    'http://127.0.0.1:8000',
+    # Add more domains as needed
+]
+
+
+# Allow specific HTTP methods
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+
+# Allow specific HTTP headers
+CORS_ALLOW_HEADERS = [
+    "Authorization",
+    "Content-Type",
+]
+
+# Allow cookies to be included in cross-origin requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Set the maximum age of the CORS preflight request cache
+CORS_MAX_AGE = 86400  # 24 hours
 
 WSGI_APPLICATION = 'GP.wsgi.application'
 
@@ -187,8 +186,8 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=2),  
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=31),  
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -198,6 +197,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+CSRF_TRUSTED_ORIGINS=['https://gp-mvz0.onrender.com']
 
 # write logs to file
 LOGGING = {
