@@ -14,11 +14,13 @@ from datetime import date
 class GetProfile(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, NurseId):
+    def get(self,req):
           try:
-              Nurse = User.objects.get(id=NurseId , type="N")
+              Nurse = req.user
           except User.DoesNotExist:
-              return Response({"message": "Nurse with ID : {NurseId} doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
+              return Response({"message": "Nurse with ID : {Nurse.email} doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
+          except not Nurse.is_authenticated:
+              return Response({"message": "User not authenticated!"}, status=401)
           serializer = NurseSerializer(Nurse)
           return Response(serializer.data, status=status.HTTP_200_OK)
     
