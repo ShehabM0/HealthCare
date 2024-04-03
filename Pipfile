@@ -23,7 +23,7 @@ pyyaml = "==6.0.1"
 sqlparse = "==0.4.4"
 typing-extensions = "==4.10.0"
 uritemplate = "==4.1.1"
-psycopg2 = "*"
+psycopg2 = "==2.9.9"
 
 [dev-packages]
 

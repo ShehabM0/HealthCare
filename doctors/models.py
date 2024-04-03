@@ -8,6 +8,6 @@ class Clinic(models.Model):
 
 class WorkingHour(models.Model):
     clinic_id = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True, blank=True)
-    day = models.CharField(max_length=10)
+    day = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
