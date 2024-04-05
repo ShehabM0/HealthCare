@@ -69,4 +69,29 @@ class UpdatePasswordSerializer(serializers.Serializer):
         if len(data['password']) < 8:
             raise serializers.ValidationError("Password must be at least 8 characters.")
         return data
-        
+
+# Forgot password email verification
+class VerifyEmailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['email']
+
+    def validate_email(self, email):
+        user_id = self.context['user_id']
+        verify_email = User.objects.filter(id=user_id, email=email).exists()
+        if not verify_email:
+            raise serializers.ValidationError({"email": "Error verifying Email, make sure you entered your email correct!"})
+        return email
+    
+class ResetPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=30)
+    confirm_password = serializers.CharField(max_length=30)
+
+    def validate(self, data):
+        if data['password'] != data['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "Password and Confirm Password does not match"})
+        if len(data['password']) < 8:
+            raise serializers.ValidationError({"password": "Password must be at least 8 characters."})
+        return data

@@ -6,10 +6,11 @@ from random import randrange
 SUBJECTS = {
     "hr_account_creation.html": "Congratulations, Your email is ready!",
     "registration.html": "Your SignUp verification code",
-    "change_email.html": "Your Email verification code"
+    "change_email.html": "Your Email verification code",
+    "forgot_password.html": "Reset Your Password link"
 }
 
-def SendEmail(userName, userEmail, userPass, code, expire_time, htmlFile):
+def SendEmail(userName=None, userEmail=None, userPass=None, code=None, expire_time=None, redirect_url=None, htmlFile=None):
     subject = SUBJECTS[htmlFile]
     text_content = "Email Body."
     from_email = settings.EMAIL_HOST_USER
@@ -20,7 +21,8 @@ def SendEmail(userName, userEmail, userPass, code, expire_time, htmlFile):
         "user_email": userEmail,
         "user_password": userPass,
         "code": code,
-        "expire_time": expire_time
+        "expire_time": expire_time,
+        "redirect_url":redirect_url
     })
 
     msg = EmailMultiAlternatives(subject, text_content, from_email, [userEmail])
