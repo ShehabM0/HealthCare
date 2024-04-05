@@ -85,7 +85,6 @@ class User(AbstractUser):
     gender = models.CharField(max_length=1,choices=GENDER_TYPES, default='M')
     email = models.EmailField(unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    # phone = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
     clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
     ssn = models.CharField(max_length=14, unique=True, null=True)

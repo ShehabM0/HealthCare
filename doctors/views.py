@@ -1,7 +1,10 @@
+from datetime import datetime
 from django.shortcuts import render
 from rest_framework import generics
 from .models import *
 from .serializers import *
+from rest_framework.views import APIView
+from rest_framework.response import Response
 # Create your views here.
 
 
@@ -17,13 +20,6 @@ class ClinicView(generics.RetrieveUpdateDestroyAPIView):
 class AddClinicView(generics.CreateAPIView):
     queryset = Clinic.objects.all()
     serializer_class = ClinicSerializer
-
-class ListDoctorsView(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = DoctorSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().filter(is_doctor=True)
     
 class AddWorkingHourView(generics.CreateAPIView):
     queryset = WorkingHour.objects.all()
@@ -33,7 +29,27 @@ class WorkingHoursView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WorkingHour.objects.all()
     serializer_class = WorkingHourSerializer
 
+
 class ListWorkingHoursView(generics.ListAPIView):
     queryset = WorkingHour.objects.all()
     serializer_class = WorkingHourSerializer
+
+
+    
+class ListAllClinics(APIView):
+    def get(self, request):
+        clinics = Clinic.objects.all()
+        response = []
+        for clinic in clinics:
+            clinic_doctor = User.objects.filter(clinic=clinic, type='D').first()
+            serializer = ClinicSerializer(clinic).data
+            serializer['doctor'] = DoctorSerializer(clinic_doctor).data
+            response.append(serializer)
+        return Response(response)
+    
+class GetClinicWorkingHours(APIView):
+    def get(self,request, clinic_id):
+        working_hours = WorkingHour.objects.filter(clinic_id=clinic_id, day__gte=datetime.now())
+        serializer = WorkingHourSerializer(working_hours, many=True)
+        return Response(serializer.data)
 

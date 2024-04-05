@@ -22,4 +22,10 @@ class WorkingHourSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkingHour
         fields = '__all__'
-        depth = 1
+
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'id']

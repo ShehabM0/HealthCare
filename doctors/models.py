@@ -11,3 +11,10 @@ class WorkingHour(models.Model):
     day = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+# status reservation
+# status clinic busy available
+# patient history
+# list clinics 
+# get medical record
+# working hours for a clinic

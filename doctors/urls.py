@@ -5,11 +5,10 @@ from .views import *
 app_name = 'doctors'
 
 urlpatterns = [
-    path('doctors/', ListDoctorsView.as_view()),
-    path('clinics/', ListClinicsView.as_view()),
-    path('clinic/<int:pk>/', ClinicView.as_view()),
-    path('clinic/', AddClinicView.as_view()),
-    path('working-hour/', AddWorkingHourView.as_view()),
-    path('working-hour/<int:pk>/', WorkingHoursView.as_view()),
-    path('working-hours/', ListWorkingHoursView.as_view()),
+    path('clinics/', ListAllClinics.as_view()),
+    # path('clinic/<int:pk>/', ClinicView.as_view()),
+    # path('clinic/', AddClinicView.as_view()),
+    path('working-hours/<int:clinic_id>', GetClinicWorkingHours.as_view()),
+    # path('working-hour/', AddWorkingHourView.as_view()),
+    # path('working-hour/<int:pk>/', WorkingHoursView.as_view()),
 ]
