@@ -33,3 +33,7 @@ class WorkingHoursView(generics.RetrieveUpdateDestroyAPIView):
     queryset = WorkingHour.objects.all()
     serializer_class = WorkingHourSerializer
 
+class ListWorkingHoursView(generics.ListAPIView):
+    queryset = WorkingHour.objects.all()
+    serializer_class = WorkingHourSerializer
+

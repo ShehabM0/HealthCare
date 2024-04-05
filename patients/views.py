@@ -74,6 +74,10 @@ class ReserveClinicView(APIView):
         else:
             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
+class GetClinicQeueView(APIView):
+    def get(self, request, clinic_id, working_hour_id):
+        return Response({"number in qeue": Reservations.objects.filter(clinic = clinic_id, working_hour=working_hour_id).count() + 1}, status=status.HTTP_200_OK)
+        
 
 class ReservationsView(APIView):
     permission_classes = [permissions.IsAuthenticated]

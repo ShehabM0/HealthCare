@@ -9,6 +9,7 @@ urlpatterns = [
     path('clinics/', ListClinicsView.as_view()),
     path('clinic/<int:pk>/', ClinicView.as_view()),
     path('clinic/', AddClinicView.as_view()),
-    path('working-hours/', AddWorkingHourView.as_view()),
+    path('working-hour/', AddWorkingHourView.as_view()),
     path('working-hour/<int:pk>/', WorkingHoursView.as_view()),
+    path('working-hours/', ListWorkingHoursView.as_view()),
 ]
