@@ -29,8 +29,8 @@ class GetPatientsClinic(APIView):
 
     def get(self, req):
           try:
-              PatientsReserv =  Reservations.objects.filter(clinic=req.clinic , working_hour=req.date)
-          except Reservations.DoesNotExist:
+              PatientsReserv =  Reservation.objects.filter(clinic=req.clinic , working_hour=req.date)
+          except Reservation.DoesNotExist:
               return Response({"message": "clinic {req.clinic}  and date {req.date}  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
           if PatientsReserv.acount==0 :
                return Response({"message": "there is no clinic {req.clinic}  on  date {req.date} !"}, status=status.HTTP_404_NOT_FOUND)

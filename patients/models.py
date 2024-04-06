@@ -93,7 +93,7 @@ class User(AbstractUser):
     blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+', null=True)
 
 
-class Reservations(models.Model):
+class Reservation(models.Model):
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
     clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True)
     working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)

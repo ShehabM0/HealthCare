@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import *
 from rest_framework.response import Response
+from doctors.models import *
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -31,10 +32,31 @@ class PreserveClinicSerializer(serializers.Serializer):
     clinic_id = serializers.IntegerField()
     working_hour_id = serializers.IntegerField()
 
-class ReservationsSerializer(serializers.ModelSerializer):
+    def validate(self,data):
+        
+        if not Clinic.objects.filter(id=data['clinic_id']).exists():
+            raise ValidationError({"clinic_id": "Clinic does not exist"})
+        if not WorkingHour.objects.filter(id=data['working_hour_id']).exists():
+            raise ValidationError({"working_hour_id": "Working hour does not exist"})
+        return data
+
+
+class GetWorkingHoursForUserReservations(serializers.ModelSerializer):
+    day_name = serializers.SerializerMethodField()
+
     class Meta:
-        model = Reservations
-        fields = '__all__'
+        model = WorkingHour
+        fields = ['day', 'day_name']
+
+    def get_day_name(self, obj):
+        day_of_week = obj.day.strftime("%A")
+        return day_of_week
+
+class ReservationsSerializer(serializers.ModelSerializer):
+    working_hour = GetWorkingHoursForUserReservations()
+    class Meta:
+        model = Reservation
+        exclude = ['patient', 'id']
         depth = 1
 
 class UploadMedicalRecordSerializer(serializers.Serializer):

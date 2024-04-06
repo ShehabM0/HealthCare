@@ -61,9 +61,11 @@ class ReserveClinicView(APIView):
         if serializer.is_valid():
             
             user = request.user
-            number_in_qeue = Reservations.objects.filter(clinic = serializer.data['clinic_id']).count() + 1
+            number_in_qeue = Reservation.objects.filter(clinic = serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id']).count() + 1
+            if Reservation.objects.filter(clinic=serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id'], patient=request.user.pk).exists():
+                raise ValidationError({"clinic_id": "This clinic is already reserved"})
             
-            reservation = Reservations(
+            reservation = Reservation(
                 patient=user,
                 clinic=Clinic.objects.get(id = serializer.data['clinic_id']),
                 working_hour = WorkingHour.objects.get(id = serializer.data['working_hour_id']),
@@ -77,7 +79,7 @@ class ReserveClinicView(APIView):
 
 class GetClinicQeueView(APIView):
     def get(self, request, clinic_id, working_hour_id):
-        return Response({"number in qeue": Reservations.objects.filter(clinic = clinic_id, working_hour=working_hour_id).count() + 1}, status=status.HTTP_200_OK)
+        return Response({"number in qeue": Reservation.objects.filter(clinic = clinic_id, working_hour=working_hour_id).count() + 1}, status=status.HTTP_200_OK)
         
 
 class ReservationsView(APIView):
@@ -85,7 +87,7 @@ class ReservationsView(APIView):
 
     def get(self, request):
         user = request.user
-        reservations = Reservations.objects.filter(patient=user)
+        reservations = Reservation.objects.filter(patient=user)
         serializer = ReservationsSerializer(reservations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
