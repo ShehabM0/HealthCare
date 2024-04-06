@@ -8,7 +8,7 @@ class CreateCodeSerializer(serializers.ModelSerializer):
         model=VerificationCode
         fields=['email']
 
-class VerifyCodeSerializer(serializers.ModelSerializer):
+class ValidateCodeSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     code = serializers.CharField(max_length=6)
 

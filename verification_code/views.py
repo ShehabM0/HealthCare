@@ -42,9 +42,7 @@ def CreateVerificationCode(req):
     end_at=end_at.strftime("%Y/%m/%d, %I:%M:%S %p")
 
     SendEmail(
-        userName=None,
         userEmail=req.data['email'],
-        userPass=None,
         code=code,
         expire_time=end_at,
         htmlFile=html_file
@@ -52,10 +50,10 @@ def CreateVerificationCode(req):
 
     return Response({"message": "Success"}, status=status.HTTP_200_OK)
 
-@swagger_auto_schema(method='POST', request_body=VerifyCodeSerializer)
+@swagger_auto_schema(method='POST', request_body=ValidateCodeSerializer)
 @api_view(['POST'])
 def VerifyCode(req):
-    serializer = VerifyCodeSerializer(data=req.data)
+    serializer = ValidateCodeSerializer(data=req.data)
     if not serializer.is_valid():
         return Response({"message": "Invalid code", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -65,12 +63,12 @@ def VerifyCode(req):
         return Response({"message": "Wrong verification code, please make sure you entered the right code or requset another one!"}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = GetCodeSerializer(obj, many=False)
-
-    start_str=(serializer.data)['created_at']
+    start_str=serializer.data['created_at']
     start_date = datetime.strptime(start_str, '%Y-%m-%d %H:%M:%S.%f')
     interval=datetime.now()- timedelta(days=1)
     if start_date < interval:
         return Response({"message": "Expired verification code, please requset another one!"}, status=status.HTTP_410_GONE)
+    obj.delete()
 
     return Response({"message": "Valid code"}, status=status.HTTP_200_OK)
 
