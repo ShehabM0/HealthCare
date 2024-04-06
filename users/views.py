@@ -165,8 +165,12 @@ def ResetPassword(req, token):
     if not user.is_authenticated:
         return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    user=User.objects.get(username=user)
+    serializer=UserSerializer(user)
+    user = req.user
+
     try:
-        obj = VerificationCode.objects.get(code=token)
+        obj = VerificationCode.objects.get(email=serializer.data['email'], code=token)
     except VerificationCode.DoesNotExist:
         return Response({"message": "Wrong verification code, please make sure you entered the right code or requset another one!"}, status=status.HTTP_404_NOT_FOUND)
     
