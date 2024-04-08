@@ -116,10 +116,13 @@ insurance_number = serializer.data['insurance_number'],
 blood = serializer.data['blood']
 '''
 
-# class UpdateDeleteProfileView(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes = [permissions.IsAuthenticated]
-#     serializer_class = UpdateDeleteProfileSerializer
-#     queryset = User.objects.all()
-
-#     def get_object(self):
-#         return self.request.user
+class UpdateReservationStatus(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    @swagger_auto_schema(request_body=UpdateReservationStatusSerializer)
+    def patch(self, request, reservation_id):
+        serializer = UpdateReservationStatusSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        reservation = Reservation.objects.get(id=reservation_id)
+        reservation.status = serializer.data['status']
+        reservation.save()
+        return Response({"message": "Reservation status updated successfully", "data" : ReservationsSerializer(reservation).data}, status=status.HTTP_200_OK)

@@ -29,3 +29,11 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'id']
+
+class updateClinicStatusSerializer(serializers.Serializer):
+    status = serializers.CharField(max_length=1, required=True)
+
+    def validate(self, data):
+        if data['status'] not in ['A', 'C']:
+            raise serializers.ValidationError({"status": "Invalid status"})
+        return data

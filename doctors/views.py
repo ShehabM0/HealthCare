@@ -53,3 +53,15 @@ class GetClinicWorkingHours(APIView):
         serializer = WorkingHourSerializer(working_hours, many=True)
         return Response(serializer.data)
 
+class UpdateClinicStatus(APIView):
+    def patch(self, request, clinic_id):
+        try:
+            clinic = Clinic.objects.get(id=clinic_id)
+        except Clinic.DoesNotExist:
+            return Response({"message": "Clinic does not exist"}, status=404)
+        serializer = updateClinicStatusSerializer(data=request.data)
+        if serializer.is_valid():
+            clinic.status = serializer.data['status']
+            clinic.save()
+            return Response({"message": "Clinic status updated successfully"})
+        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)

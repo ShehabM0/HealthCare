@@ -12,4 +12,5 @@ urlpatterns = [
     path('reserve-clinic/<int:clinic_id>/<int:working_hour_id>/', views.GetClinicQeueView.as_view(), name='reserve-clinic-details'),
     path('reservations/', views.ReservationsView.as_view(), name='reservations'),
     path('upload-record/', views.UploadMedicalRecord.as_view(), name='upload-record'),
+    path('reservation/<int:reservation_id>', views.UpdateReservationStatus.as_view()),
 ]

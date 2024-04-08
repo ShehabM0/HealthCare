@@ -90,3 +90,9 @@ if len(data['insurance_number']) != 9:
 ''' 
 
 
+class UpdateReservationStatusSerializer(serializers.Serializer):
+    status = serializers.CharField(max_length=1, required=True)
+    def validate(self, data):
+        if data['status'] not in ['A', 'R', 'D']:
+            raise ValidationError("Invalid status. Must be (A)ccepted, or (D)one.")
+        return data
