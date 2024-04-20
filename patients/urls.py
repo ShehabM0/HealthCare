@@ -13,4 +13,5 @@ urlpatterns = [
     path('reservations/', views.ReservationsView.as_view(), name='reservations'),
     path('upload-record/', views.UploadMedicalRecord.as_view(), name='upload-record'),
     path('reservation/<int:reservation_id>', views.UpdateReservationStatus.as_view()),
+    path('history/', views.ReservationsHistory.as_view())
 ]

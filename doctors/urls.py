@@ -11,5 +11,5 @@ urlpatterns = [
     path('working-hours/<int:clinic_id>', GetClinicWorkingHours.as_view()),
     # path('working-hour/', AddWorkingHourView.as_view()),
     # path('working-hour/<int:pk>/', WorkingHoursView.as_view()),
-    path('clinic/<int:clinic_id>/status/', UpdateClinicStatus.as_view()),
+    path('clinic/<int:clinic_id>', UpdateClinicStatus.as_view()),
 ]

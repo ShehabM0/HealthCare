@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 
 from django.contrib.auth.models import AbstractUser
@@ -97,7 +98,7 @@ class Reservation(models.Model):
     statuses = [
         ('P', 'Pending'),
         ('A', 'Accepted'),
-         ('D', 'Done'),
+        ('D', 'Done'),
     ]
 
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
@@ -105,6 +106,10 @@ class Reservation(models.Model):
     working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)
     number_in_qeue = models.IntegerField(default=1)
     status = models.CharField(max_length=1, choices=statuses, default='P')
+    price = models.FloatField(default=100)
+    reserved_at = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    payment = models.CharField(max_length=100, default='Cash')
+    payment_status = models.BooleanField(default=False)
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_history')

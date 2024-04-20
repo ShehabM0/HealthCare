@@ -11,6 +11,7 @@ class Clinic(models.Model):
     ]
     name = models.CharField(max_length=100)
     status = models.CharField(max_length=1, choices=statuses, default='A')
+    price = models.FloatField(default=100)
 
 
 class WorkingHour(models.Model):

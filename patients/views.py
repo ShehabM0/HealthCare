@@ -53,7 +53,7 @@ class Register_view(APIView):
         
 
 class ReserveClinicView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     @swagger_auto_schema(request_body=PreserveClinicSerializer)
     def post(self, request):
@@ -64,12 +64,13 @@ class ReserveClinicView(APIView):
             number_in_qeue = Reservation.objects.filter(clinic = serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id']).count() + 1
             if Reservation.objects.filter(clinic=serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id'], patient=request.user.pk).exists():
                 raise ValidationError({"clinic_id": "This clinic is already reserved"})
-            
+            clinic = Clinic.objects.get(id = serializer.data['clinic_id'])
             reservation = Reservation(
                 patient=user,
-                clinic=Clinic.objects.get(id = serializer.data['clinic_id']),
+                clinic=clinic,
                 working_hour = WorkingHour.objects.get(id = serializer.data['working_hour_id']),
-                number_in_qeue = number_in_qeue
+                number_in_qeue = number_in_qeue,
+                price = clinic.price
             )
             reservation.save()
             return Response({"message": "Clinic preserved successfully"}, status=status.HTTP_200_OK)
@@ -106,16 +107,6 @@ class UploadMedicalRecord(APIView):
         medical_record.save()
         return Response({"message": "Medical record uploaded successfully"}, status=status.HTTP_200_OK)
 
-'''
-date_of_birth=serializer.data['date_of_birth'],
-address=serializer.data['address'],
-type=serializer.data['type'],
-status=serializer.data['status'],
-ssn = serializer.data['ssn'],
-insurance_number = serializer.data['insurance_number'],
-blood = serializer.data['blood']
-'''
-
 class UpdateReservationStatus(APIView):
     permission_classes = [permissions.IsAuthenticated]
     @swagger_auto_schema(request_body=UpdateReservationStatusSerializer)
@@ -126,3 +117,20 @@ class UpdateReservationStatus(APIView):
         reservation.status = serializer.data['status']
         reservation.save()
         return Response({"message": "Reservation status updated successfully", "data" : ReservationsSerializer(reservation).data}, status=status.HTTP_200_OK)
+    
+    def get(self,request,reservation_id):
+        permission_classes = [permissions.IsAuthenticated]
+        try:
+            reservation = Reservation.objects.get(id=reservation_id, patient=request.user)
+            serializer = ReservationsSerializer(reservation)
+            return Response({'data' : serializer.data})
+        except Reservation.DoesNotExist:
+            return Response({"message": "Reservation does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ReservationsHistory(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self,request):
+        reservations = Reservation.objects.filter(patient=request.user)
+        serializer = ReservationsSerializer(reservations, many=True)
+        return Response({'data' : serializer.data})

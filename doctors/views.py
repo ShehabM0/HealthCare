@@ -5,6 +5,7 @@ from .models import *
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
 
@@ -54,6 +55,7 @@ class GetClinicWorkingHours(APIView):
         return Response(serializer.data)
 
 class UpdateClinicStatus(APIView):
+    @swagger_auto_schema(request_body=updateClinicStatusSerializer)
     def patch(self, request, clinic_id):
         try:
             clinic = Clinic.objects.get(id=clinic_id)
@@ -61,7 +63,8 @@ class UpdateClinicStatus(APIView):
             return Response({"message": "Clinic does not exist"}, status=404)
         serializer = updateClinicStatusSerializer(data=request.data)
         if serializer.is_valid():
-            clinic.status = serializer.data['status']
+            clinic.status = serializer.data.get('status', clinic.status)
+            clinic.price = serializer.data.get('price', clinic.price)
             clinic.save()
-            return Response({"message": "Clinic status updated successfully"})
+            return Response({"message": "Clinic data updated successfully", "data" : ClinicSerializer(clinic).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
