@@ -96,3 +96,9 @@ class UpdateReservationStatusSerializer(serializers.Serializer):
         if data['status'] not in ['A', 'R', 'D']:
             raise ValidationError("Invalid status. Must be (A)ccepted, or (D)one.")
         return data
+
+
+class MedicalRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalRecord
+        fields = ['file', 'type']

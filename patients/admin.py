@@ -10,3 +10,4 @@ from .models import *
 admin.site.register(User)
 admin.site.register(Reservation)
 admin.site.register(MedicalHistory)
+admin.site.register(MedicalRecord)

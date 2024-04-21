@@ -106,6 +106,11 @@ class UploadMedicalRecord(APIView):
         )
         medical_record.save()
         return Response({"message": "Medical record uploaded successfully"}, status=status.HTTP_200_OK)
+    
+    def get(self, request):
+        medical_records = MedicalRecord.objects.filter(patient=request.user)
+        serializer = MedicalRecordSerializer(medical_records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UpdateReservationStatus(APIView):
     permission_classes = [permissions.IsAuthenticated]
