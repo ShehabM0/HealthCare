@@ -78,6 +78,8 @@ class ReserveClinicView(APIView):
             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
+        
+
 class GetClinicQeueView(APIView):
     def get(self, request, clinic_id, working_hour_id):
         return Response({"number in qeue": Reservation.objects.filter(clinic = clinic_id, working_hour=working_hour_id).count() + 1}, status=status.HTTP_200_OK)
@@ -129,6 +131,19 @@ class UpdateReservationStatus(APIView):
             reservation = Reservation.objects.get(id=reservation_id, patient=request.user)
             serializer = ReservationsSerializer(reservation)
             return Response({'data' : serializer.data})
+        except Reservation.DoesNotExist:
+            return Response({"message": "Reservation does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete(self, request, reservation_id):
+        try:
+            reservation = Reservation.objects.get(id=reservation_id, patient=request.user)
+            reservation.delete()
+            reservations = Reservation.objects.filter(clinic=reservation.clinic, working_hour=reservation.working_hour, number_in_qeue__gt=reservation.number_in_qeue)
+            for res in reservations:
+                if res.number_in_qeue > 1:
+                    res.number_in_qeue -= 1
+                    res.save()
+            return Response({"message": "Reservation deleted successfully"}, status=status.HTTP_200_OK)
         except Reservation.DoesNotExist:
             return Response({"message": "Reservation does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
