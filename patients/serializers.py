@@ -56,7 +56,7 @@ class ReservationsSerializer(serializers.ModelSerializer):
     working_hour = GetWorkingHoursForUserReservations()
     class Meta:
         model = Reservation
-        exclude = ['patient', 'id']
+        exclude = ['patient']
         depth = 1
 
 class UploadMedicalRecordSerializer(serializers.Serializer):
