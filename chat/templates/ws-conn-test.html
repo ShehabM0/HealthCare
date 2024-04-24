@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>WebSocket</title>
+</head>
+
+<body>
+
+    <p> Type a Message </p>
+    <form id="form">
+        <input type="text" name="message"/>
+    </form>
+
+    <div id="messages"></div>
+    <script type="text/javascript">
+        let url = 'ws://127.0.0.1:8000/chat/01013455143-01013455142/'
+        const chatSocket = new WebSocket(url)
+
+        chatSocket.onmessage = function(e) {
+            let data = JSON.parse(e.data)
+            console.log('Data:', data)
+
+            let messages = document.getElementById('messages')
+            if(data.type === 'send_message') {
+                messages.insertAdjacentHTML('beforeend',
+                    `<div>
+                        <p>${data.message}</p>
+                    </div>`
+                )
+            }
+        }
+
+        let send_message_form = document.getElementById('form')
+        send_message_form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            let message = e.target.message.value 
+            chatSocket.send(JSON.stringify({
+                'type': 'send_message',
+                'message': message
+            }))
+            send_message_form.reset()
+        })
+    </script>
+</body>
+</html>

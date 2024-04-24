@@ -2,9 +2,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ChatRoomSerializer
 from .models import ChatRoom, ChatMessage
+from django.shortcuts import render
 from rest_framework import status
 from django.db.models import Q
 from .serializers import *
+
+def wsTemplate(req):
+    return render(req, 'ws-conn-test.html')
 
 @api_view(['GET'])
 def ListRoomsView(req):
