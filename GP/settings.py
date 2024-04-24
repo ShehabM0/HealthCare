@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'chat',
     'hr',
 
+    'channels',
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,7 +126,18 @@ CORS_ALLOW_CREDENTIALS = True
 # Set the maximum age of the CORS preflight request cache
 CORS_MAX_AGE = 86400  # 24 hours
 
+# Traditionl web servers e.g. http
 WSGI_APPLICATION = 'GP.wsgi.application'
+
+# Asynchronous servers e.g. ws
+ASGI_APPLICATION = 'GP.asgi.application'
+
+# real-time communication 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 
 # Database
