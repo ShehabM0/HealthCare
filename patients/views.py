@@ -47,7 +47,7 @@ class Register_view(APIView):
                 user.save()
                 return Response({"message": "User created successfully"}, status=status.HTTP_201_CREATED)
             except IntegrityError:
-                return Response({"message": "User already exists"}, status=status.HHTTP_409_CONFLICT)
+                return Response({"message": "User already exists"}, status=status.HTTP_409_CONFLICT)
         else:
             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         

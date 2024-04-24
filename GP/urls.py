@@ -49,6 +49,7 @@ urlpatterns = [
     path('verification-code/', include('verification_code.urls')),
     path('patients/',include('patients.urls')),
     path('users/', include('users.urls')),
+    path('chat/', include('chat.urls')),
     path('hr/', include('hr.urls')),
     path('nurses/', include('nurses.urls')), 
     path('doctors/', include('doctors.urls')),
