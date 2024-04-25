@@ -1,4 +1,5 @@
 from rest_framework.decorators import api_view
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from .serializers import ChatRoomSerializer
 from .models import ChatRoom, ChatMessage
@@ -10,6 +11,7 @@ from .serializers import *
 def wsTemplate(req):
     return render(req, 'ws-conn-test.html')
 
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 def ListRoomsView(req):
     user = req.user
@@ -18,6 +20,7 @@ def ListRoomsView(req):
 
     return Response({"message": serializer.data})
 
+@swagger_auto_schema(method='POST', manual_fields=['other_user'])
 @api_view(['POST'])
 def CreateRoomView(req):
     sender = req.user
@@ -45,9 +48,9 @@ def CreateRoomView(req):
 
     return Response({"message": "Room created successfully.", "data": serializer.data})
 
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
 def ListRoomMessagesView(req):
-    user = req.user
     room_name = req.data.get('room_name', None)
 
     try:
