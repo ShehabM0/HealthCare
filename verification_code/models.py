@@ -10,7 +10,7 @@ class VerificationCode(models.Model):
     type = models.CharField(max_length=15, choices=OP_TYPES)
     email = models.EmailField()
     code = models.CharField(max_length=40)
-    created_at = models.CharField(max_length=30, default=f' {timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.email + " - " + self.code

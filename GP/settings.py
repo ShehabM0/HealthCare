@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'verification_code',
     'patients',
     'doctors',
+    'payment',
     'nurses',
     'users',
     'chat',
@@ -180,7 +181,9 @@ TIME_ZONE = 'Etc/GMT-2'
 
 USE_I18N = True
 
-USE_TZ = True
+# True  -> YYYY-MM-DD HH:MM:SS+00:00
+# False -> YYYY-MM-DD HH:MM:SS
+USE_TZ = False
 
 AUTH_USER_MODEL = 'patients.User'
 # Static files (CSS, JavaScript, Images)

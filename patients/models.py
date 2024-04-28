@@ -92,6 +92,7 @@ class User(AbstractUser):
     insurance_number = models.CharField(max_length=9, unique=True, null=True)
     specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
     blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+', null=True)
+    remember_card = models.DateTimeField(null=True, default=None)
 
 
 class Reservation(models.Model):
