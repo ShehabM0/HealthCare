@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from django.core.paginator import Paginator
 from datetime import datetime, timedelta
 from rest_framework import status
 from .models import CreditCard
@@ -60,6 +61,7 @@ def AssignCard(req):
     user.save()
 
     card.user = user
+    card.save()
 
     return Response({"message:": "Card assigned to user successfully."})
 
@@ -144,9 +146,20 @@ def ListPurchases(req):
         purchases = Purchase.objects.filter(user=user.id, success=False)
     else:
         purchases = Purchase.objects.filter(user=user.id)
-    purchases = ListPurchasesSerializer(purchases, many=True)
 
-    return Response({"data": purchases.data})
+    page_number = req.GET.get('page', '')
+    if not page_number:
+        serializer = ListPurchasesSerializer(purchases, many=True)
+        return Response({"data": serializer.data, "count": len(serializer.data)})
+
+    paginator = Paginator(purchases, 10)
+    page_number = int(page_number)
+    page_obj = paginator.get_page(page_number)
+    serializer = ListPurchasesSerializer(page_obj, many=True)
+
+    if page_number > paginator.num_pages:
+        return Response({"data": [], "count": 0}, status=status.HTTP_404_NOT_FOUND)
+    return Response({"data": serializer.data, "count": len(serializer.data)})
 
 def matchCard(card, serializer):
     if(
