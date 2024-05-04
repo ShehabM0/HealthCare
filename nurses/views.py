@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from patients.models import *
 from .serializers import *
 import os
-from datetime import date
+from datetime import datetime
 
 class GetProfile(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -29,11 +29,11 @@ class GetPatientsClinic(APIView):
 
     def get(self, req):
           try:
-              PatientsReserv =  Reservation.objects.filter(clinic=req.clinic , working_hour=req.date)
+              Nurse = req.user
+              PatientsReserv =   Reservation.objects.filter(clinic = Nurse.clinic_id) 
           except Reservation.DoesNotExist:
-              return Response({"message": "clinic {req.clinic}  and date {req.date}  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
-          if PatientsReserv.acount==0 :
-               return Response({"message": "there is no clinic {req.clinic}  on  date {req.date} !"}, status=status.HTTP_404_NOT_FOUND)
+              return Response({"message": "clinic {Nurse.specialization}  and date sunday  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
+          if len(PatientsReserv)==0 :
+               return Response({"message": "there is no clinic {Nurse.specialization}  on  date sunday !"}, status=status.HTTP_404_NOT_FOUND)
           serializer = ReservationsSerializer(PatientsReserv)
-          return Response({"data": serializer.data, "count": len(serializer.data)})
-
+          return Response({"data": serializer.data, "count": len(serializer.data)}) 
