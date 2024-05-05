@@ -1,39 +1,26 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions
 from rest_framework.response import Response
-from django.core.paginator import Paginator
 from rest_framework.views import APIView
-from django.db import IntegrityError
 from patients.models import *
 from .serializers import *
-import os
-from datetime import datetime
-
+from .permissions import IsNurse
 class GetProfile(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self,req):
-          try:
-              Nurse = req.user
-          except User.DoesNotExist:
-              return Response({"message": "Nurse with ID : {Nurse.email} doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
-          except not Nurse.is_authenticated:
-              return Response({"message": "User not authenticated!"}, status=401)
-          serializer = NurseSerializer(Nurse)
-          return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self,req):        
+        Nurse = req.user
+        serializer = NurseSerializer(Nurse)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 class GetPatientsClinic(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
           try:
               Nurse = req.user
-              PatientsReserv =   Reservation.objects.filter(clinic = Nurse.clinic_id) 
+              PatientsReserv =   Reservation.objects.filter(clinic = Nurse.clinic, status='A' )
+              print(PatientsReserv)
           except Reservation.DoesNotExist:
               return Response({"message": "clinic {Nurse.specialization}  and date sunday  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
-          if len(PatientsReserv)==0 :
-               return Response({"message": "there is no clinic {Nurse.specialization}  on  date sunday !"}, status=status.HTTP_404_NOT_FOUND)
-          serializer = ReservationsSerializer(PatientsReserv)
+          serializer = ReservationsSerializer(PatientsReserv, many=True)
           return Response({"data": serializer.data, "count": len(serializer.data)}) 

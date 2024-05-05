@@ -16,3 +16,5 @@ class ReservationsSerializer(serializers.ModelSerializer):
         model = Reservation
         fields = '__all__'
         depth = 1        
+
+        

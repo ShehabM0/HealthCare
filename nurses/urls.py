@@ -6,7 +6,7 @@ app_name = 'nurses'
 
 urlpatterns = [
     path('profile/', views.GetProfile.as_view(), name='profile'),
-    path('GetPationsClinic', views.GetPatientsClinic.as_view(), name='GetPationsINClinic'),
+    path('Casses/', views.GetPatientsClinic.as_view(), name='Casses'),
     # path('/', views.ReservationsView.as_view(), name=''),
     # path('/', views.UploadMedicalRecord.as_view(), name=''),
 ]
