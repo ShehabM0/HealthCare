@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from .permissions import IsDoctor
+from common.utils import get_status_word
 
 
 class ListClinicsView(generics.ListCreateAPIView):
@@ -89,15 +90,21 @@ class UserDetails(APIView):
         try:
             user = User.objects.get(id=id, type='P')
             # status_types is like [('',''),('','')]
-            user.status = self.get_status_word(user.status, User.STATUS_TYPES)
-            user.gender = self.get_status_word(user.gender, User.STATUS_TYPES)
+            user.status = get_status_word(user.status, User.STATUS_TYPES)
+            user.gender = get_status_word(user.gender, User.STATUS_TYPES)
         except User.DoesNotExist:
             return Response({"message": "User does not exist"}, status=404)
         serializer = PatientSerializer(user)
         return Response(serializer.data)
     
-    def get_status_word(self, status_value, status_types):
-        for status_code, status_word in status_types:
-            if status_code == status_value:
-                return status_word
-        return None
+    
+class PatientMedicalRecordView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+
+    def get(self, request, id):
+        user = User.objects.filter(id=id, type='P').first()
+        medicalRecords = MedicalRecord.objects.filter(patient=user)
+        for file in medicalRecords:
+            file.type = get_status_word(file.type, MedicalRecord.FILE_TYPES)
+        serializer = MedicalRecordSerializer(medicalRecords, many=True)
+        return Response({"data" : serializer.data, "count": medicalRecords.count()})

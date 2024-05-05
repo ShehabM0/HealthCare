@@ -62,3 +62,8 @@ class CaseSerializer(serializers.ModelSerializer):
         depth=1
 
 
+class MedicalRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalRecord
+        exclude = ['patient']
+

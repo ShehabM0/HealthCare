@@ -35,3 +35,9 @@ def GenerateRandomPass(str, n):
     for i in range(n):
         str += f"{randrange(10)}"
     return str
+
+def get_status_word(status_value, status_types):
+        for status_code, status_word in status_types:
+            if status_code == status_value:
+                return status_word
+        return None

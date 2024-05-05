@@ -13,5 +13,6 @@ urlpatterns = [
     # path('working-hour/<int:pk>/', WorkingHoursView.as_view()),
     path('clinic/<int:clinic_id>', UpdateClinicStatus.as_view()),
     path('patient/<int:id>', UserDetails.as_view()),
-    path('cases/', DoctorCasesView.as_view())
+    path('cases/', DoctorCasesView.as_view()),
+    path('records/<int:id>' , PatientMedicalRecordView.as_view()),
 ]
