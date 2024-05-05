@@ -1,4 +1,5 @@
 from .models import *
+from patients.models import *
 
 from rest_framework import serializers
 
@@ -45,3 +46,19 @@ class updateClinicStatusSerializer(serializers.Serializer):
             raise serializers.ValidationError({"price": "Invalid price"})
         
         return data
+    
+
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'blood', 'gender', 'status']
+
+
+class CaseSerializer(serializers.ModelSerializer):
+    patient = DoctorSerializer()
+    class Meta:
+        model = Reservation
+        fields = ['id', 'status', 'type', 'patient']
+        depth=1
+
+

@@ -101,7 +101,12 @@ class Reservation(models.Model):
         ('A', 'Accepted'),
         ('D', 'Done'),
     ]
-
+    TYPES = [
+        (   'S' , 'Surgery'),
+        (   'C' , 'Consultation'),
+        (   'V' , 'Visit'),
+        (   'E' , 'Examination'),
+    ]
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
     clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True)
     working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)
@@ -111,6 +116,7 @@ class Reservation(models.Model):
     reserved_at = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
     payment = models.CharField(max_length=100, default='Cash')
     payment_status = models.BooleanField(default=False)
+    type = models.CharField(max_length=1, choices=TYPES, default='C')
 
 class MedicalHistory(models.Model):
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_history')

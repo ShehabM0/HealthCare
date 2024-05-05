@@ -6,7 +6,8 @@ from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
-# Create your views here.
+from rest_framework import permissions
+from .permissions import IsDoctor
 
 
 class ListClinicsView(generics.ListCreateAPIView):
@@ -68,3 +69,35 @@ class UpdateClinicStatus(APIView):
             clinic.save()
             return Response({"message": "Clinic data updated successfully", "data" : ClinicSerializer(clinic).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+    
+
+class DoctorCasesView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        working_hour = WorkingHour.objects.filter(clinic_id=user.clinic, day__gte=datetime.now()).first()
+        cases = Reservation.objects.filter(clinic = user.clinic, status='A' , working_hour=working_hour)
+        serializer = CaseSerializer(cases, many=True)
+        return Response({"data": serializer.data , "count": cases.count()})
+    
+
+class UserDetails(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+
+    def get(self, request, id):
+        try:
+            user = User.objects.get(id=id, type='P')
+            # status_types is like [('',''),('','')]
+            user.status = self.get_status_word(user.status, User.STATUS_TYPES)
+            user.gender = self.get_status_word(user.gender, User.STATUS_TYPES)
+        except User.DoesNotExist:
+            return Response({"message": "User does not exist"}, status=404)
+        serializer = PatientSerializer(user)
+        return Response(serializer.data)
+    
+    def get_status_word(self, status_value, status_types):
+        for status_code, status_word in status_types:
+            if status_code == status_value:
+                return status_word
+        return None
