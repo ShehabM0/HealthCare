@@ -14,7 +14,5 @@ class NurseSerializer(serializers.ModelSerializer):
 class ReservationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = '__all__'
+        fields = ['id', 'number_in_qeue', 'type', 'patient']
         depth = 1        
-
-        

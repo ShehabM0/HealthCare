@@ -19,7 +19,6 @@ class GetPatientsClinic(APIView):
           try:
               Nurse = req.user
               PatientsReserv =   Reservation.objects.filter(clinic = Nurse.clinic, status='A' )
-              print(PatientsReserv)
           except Reservation.DoesNotExist:
               return Response({"message": "clinic {Nurse.specialization}  and date sunday  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
           serializer = ReservationsSerializer(PatientsReserv, many=True)
