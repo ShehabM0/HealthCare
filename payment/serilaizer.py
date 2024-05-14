@@ -1,5 +1,5 @@
 from rest_framework.exceptions import ValidationError
-from .models import CreditCard, Purchase
+from .models import CreditCard, Purchase, UserCard
 from rest_framework import serializers
 from datetime import datetime
 
@@ -83,17 +83,35 @@ class AssignCardSerializer(serializers.ModelSerializer):
             raise ValidationError({"error": "Card is expired!!"})
 
         return data
-    
-class CardSerializer(serializers.ModelSerializer):
+
+class GetCardSerilaizer(serializers.ModelSerializer):
     class Meta:
         model = CreditCard
         fields = '__all__'
+    
+class CardSerializer(serializers.ModelSerializer):
+    number = serializers.SerializerMethodField()
 
-class ListCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = CreditCard
         fields = ['id', 'number']
+    
+    def get_number(self, obj):
+        last_digits = obj.number
+        last_digits = '*' * 12 + last_digits[-4:]
+        return last_digits
 
+class UserCardSerializer(serializers.ModelSerializer):
+    card = CardSerializer(read_only=True)
+    
+    class Meta:
+        model = UserCard
+        fields = ['id', 'card']
+
+class ListCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserCard
+        fields = '__all__'
 
 
 class AddPurchaseSerializer(serializers.ModelSerializer):

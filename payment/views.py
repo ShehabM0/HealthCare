@@ -3,8 +3,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta
+from .models import CreditCard, UserCard
 from rest_framework import status
-from .models import CreditCard
 from .serilaizer import *
 
 @swagger_auto_schema(method='POST', request_body=CreateCardSerializer)
@@ -39,6 +39,8 @@ def CreateCard(req):
 @api_view(['POST'])
 def AssignCard(req):
     user = req.user
+    if not user.is_authenticated:
+        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     serializer = AssignCardSerializer(data=req.data)
     if not serializer.is_valid():
@@ -46,34 +48,62 @@ def AssignCard(req):
 
     try:
         card = CreditCard.objects.get(number=serializer.data['number'])
-        card_serializer = CardSerializer(card, many=False)
+        card_serializer = GetCardSerilaizer(card, many=False)
     except CreditCard.DoesNotExist:
         return Response({"message": "Card doesn't exist!"}, status=status.HTTP_404_NOT_FOUND)
 
     if(not matchCard(card_serializer, serializer)):
         return Response({"message": "Card data doesn't match!"}, status=status.HTTP_400_BAD_REQUEST)
 
+    userCard_instance = UserCard(
+        user = user,
+        card = card,
+        remember_at = None
+    )
+    
+    # one-to-many relationship
+    try:
+        exist_user_card = UserCard.objects.get(card=card);
+        exist_user_card.user = user
+        exist_user_card.remember_at = None
+    except UserCard.DoesNotExist:
+        exist_user_card = None
+
     remember_card = req.GET.get('remember_card', None)
     if remember_card.lower() == 'true':
-        user.remember_card = datetime.now()
-    else:
-        user.remember_card = None
-    user.save()
+        if exist_user_card: exist_user_card.remember_at = datetime.now()
+        else: userCard_instance.remember_at = datetime.now()
 
-    card.user = user
-    card.save()
+    if exist_user_card: exist_user_card.save()
+    else: userCard_instance.save()
 
     return Response({"message:": "Card assigned to user successfully."})
 
-@swagger_auto_schema(method='GET')
-@api_view(['GET'])
+@swagger_auto_schema(method='DELETE')
+@api_view(['DELETE'])
 def NeglectCards(req):
     user = req.user
+    if not user.is_authenticated:
+        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    CreditCard.objects.filter(user=user).update(user=None)
+    cards = UserCard.objects.filter(user=user)
+    for card in cards:
+        card.delete()
 
-    user.remember_card = None
-    user.save()
+    return Response({"message": "User's card(s) have been neglected successfully."})
+
+@swagger_auto_schema(method='DELETE')
+@api_view(['DELETE'])
+def NeglectCard(req, pk=None):
+    user = req.user
+    if not user.is_authenticated:
+        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        user_card = UserCard.objects.get(card=pk)
+        user_card.delete()
+    except UserCard.DoesNotExist:
+        return Response({"message": "Card not found in user's cards list!"}, status=status.HTTP_404_NOT_FOUND)
 
     return Response({"message": "User's card(s) have been neglected successfully."})
 
@@ -81,9 +111,11 @@ def NeglectCards(req):
 @api_view(['GET'])
 def ListCards(req):
     user = req.user
+    if not user.is_authenticated:
+        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    cards = CreditCard.objects.filter(user=user)
-    cards = ListCardSerializer(cards, many=True)
+    cards = UserCard.objects.filter(user=user)
+    cards = UserCardSerializer(cards, many=True)
 
     return Response({"data": cards.data})
 
@@ -91,8 +123,10 @@ def ListCards(req):
 @api_view(['POST'])
 def AddPurchase(req):
     user = req.user
+    if not user.is_authenticated:
+        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
-    cards = CreditCard.objects.filter(user=user)
+    cards = UserCard.objects.filter(user=user)
     if not cards.exists():
         return Response({"message": "User has no cards!"}, status=status.HTTP_402_PAYMENT_REQUIRED)
     
@@ -103,8 +137,8 @@ def AddPurchase(req):
     cards = ListCardSerializer(cards, many=True)
     purchase_card = None
     for card in cards.data:
-        card_number = card['number']
-        get_card = CreditCard.objects.get(number=card_number)
+        card_id = card['card']
+        get_card = CreditCard.objects.get(id=card_id)
         if get_card.balance > serializer.data['amount']:
             purchase_card = get_card
             get_card.balance -= serializer.data['amount']
@@ -120,17 +154,22 @@ def AddPurchase(req):
         created_at=datetime.now()
     )
 
-    start_date = user.remember_card
-    end_date = start_date + timedelta(days=7)
-    if datetime.now() > end_date:
-        CreditCard.objects.filter(user=user).update(user=None)
-        user.remeber_card = None
-        user.save()
-    
+    for card in cards.data:
+        card_id = card['card']
+        get_card = UserCard.objects.get(card=card_id)
+        start_date = get_card.remember_at
+        if not start_date:
+            get_card.delete()
+        else:
+            end_date = start_date + timedelta(days=7)
+            if datetime.now() > end_date:
+                get_card.delete()
+
     if purchase_card is None:
         purchase_instance.success = False
         purchase_instance.save()
         return Response({"message": "Not enough balance in your card(s)!"}, status=status.HTTP_400_BAD_REQUEST)
+
     purchase_instance.save()
     return Response({"message": "Purchase completed successfully"})
 
