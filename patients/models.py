@@ -1,18 +1,9 @@
+from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from hr.models import Employee
 from django.db import models
 
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import Group
-
-
 class User(AbstractUser):
-    USER_TYPES = [
-        ('P', 'Patient'),
-        ('D', 'Doctor'),
-        ('A', 'Admin'),
-        ('N', 'Nurse'),
-        ('H', 'Human Resources')
-    ]
     GENDER_TYPES = [
         ('M', 'Male'),
         ('F' , 'Female'),
@@ -23,48 +14,6 @@ class User(AbstractUser):
         ('W','widow'),
         ('D','devorced')
     ]
-    SPEC_TYPES = [
-        ('AnatomicalPathology', 'AnatomicalPathology'),
-        ('Anesthesiology', 'Anesthesiology'),
-        ('Cardiology', 'Cardiology'),
-        ('Cardiovascular/ThoracicSurgery', 'Cardiovascular/ThoracicSurgery'),
-        ('ClinicalImmunology/Allergy', 'ClinicalImmunology/Allergy'),
-        ('CriticalCareMedicine', 'CriticalCareMedicine'),
-        ('Dermatology', 'Dermatology'),
-        ('DiagnosticRadiology', 'DiagnosticRadiology'),
-        ('EmergencyMedicine', 'EmergencyMedicine'),
-        ('EndocrinologyandMetabolism', 'EndocrinologyandMetabolism'),
-        ('FamilyMedicine', 'FamilyMedicine'),
-        ('Gastroenterology', 'Gastroenterology'),
-        ('GeneralInternalMedicine', 'GeneralInternalMedicine'),
-        ('GeneralSurgery', 'GeneralSurgery'),
-        ('General/ClinicalPathology', 'General/ClinicalPathology'),
-        ('GeriatricMedicine', 'GeriatricMedicine'),
-        ('Hematology', 'Hematology'),
-        ('MedicalBiochemistry', 'MedicalBiochemistry'),
-        ('MedicalGenetics', 'MedicalGenetics'),
-        ('MedicalMicrobiologyandInfectiousDiseases', 'MedicalMicrobiologyandInfectiousDiseases'),
-        ('MedicalOncology', 'MedicalOncology'),
-        ('Nephrology', 'Nephrology'),
-        ('Neurology', 'Neurology'),
-        ('Neurosurgery', 'Neurosurgery'),
-        ('NuclearMedicine', 'NuclearMedicine'),
-        ('Obstetrics/Gynecology', 'Obstetrics/Gynecology'),
-        ('OccupationalMedicine', 'OccupationalMedicine'),
-        ('Ophthalmology', 'Ophthalmology'),
-        ('OrthopedicSurgery', 'OrthopedicSurgery'),
-        ('Otolaryngology', 'Otolaryngology'),
-        ('Pediatrics', 'Pediatrics'),
-        ('PhysicalMedicineandRehabilitation', 'PhysicalMedicineandRehabilitation'),
-        ('PlasticSurgery', 'PlasticSurgery'),
-        ('Psychiatry', 'Psychiatry'),
-        ('PublicHealthandPreventiveMedicine', 'PublicHealthandPreventiveMedicine'),
-        ('RadiationOncology', 'RadiationOncology'),
-        ('Respirology', 'Respirology'),
-        ('Rheumatology', 'Rheumatology'),
-        ('Urology', 'Urology'),
-    ]
-
     BLOOD_TYPES = [
         ('O', 'O'),
         ('A', 'A'),
@@ -79,7 +28,6 @@ class User(AbstractUser):
         ('AB+', 'AB+'),
     ]
 
-    type = models.CharField(max_length=2, choices=USER_TYPES, default='P')
     status = models.CharField(max_length=1, choices=STATUS_TYPES, default='S')
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -90,9 +38,8 @@ class User(AbstractUser):
     clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
     ssn = models.CharField(max_length=14, unique=True, null=True)
     insurance_number = models.CharField(max_length=9, unique=True, null=True)
-    specialization = models.CharField(max_length=50, choices=SPEC_TYPES, null=True)
     blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+', null=True)
-
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE, null=True)
 
 class Reservation(models.Model):
     statuses = [
