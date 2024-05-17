@@ -9,10 +9,12 @@ cryptography==42.0.5
 daphne==4.1.2
 dj-database-url==2.1.0
 Django==5.0.3
+django-channels-jwt-auth-middleware==1.0.0
 django-cors-headers==4.3.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.7
+Faker==25.2.0
 hyperlink==21.0.0
 idna==3.7
 incremental==22.10.0
@@ -24,6 +26,7 @@ pyasn1_modules==0.4.0
 pycparser==2.21
 PyJWT==2.8.0
 pyOpenSSL==24.1.0
+python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.1
 PyYAML==6.0.1

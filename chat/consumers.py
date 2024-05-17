@@ -1,5 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 from .models import ChatRoom, ChatMessage
+from patients.models import User
 from asgiref.sync import async_to_sync
 import json
 
@@ -7,6 +8,10 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.user = self.scope['user']
+
+        if not self.user.is_authenticated:
+            print("User not authenticated!!")
+            return
         
         try:
             self.room = ChatRoom.objects.get(room_name = self.room_name)
