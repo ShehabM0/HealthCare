@@ -10,7 +10,7 @@ from .models import Employee
 from .serializers import *
 import os
 
-@swagger_auto_schema(method='POST', request_body=CreateEmployeeSerializer)
+@swagger_auto_schema(method='POST', request_body=CreateUserSerializer)
 @api_view(['POST'])
 def CreateEmployeeView(req):
     data = req.data
@@ -69,7 +69,7 @@ def CreateEmployeeView(req):
         expire_time=None,
         htmlFile="hr_account_creation.html"
     )
-    return Response({"message": "User created successfully, check your email."}, status=status.HTTP_201_CREATED)
+    return Response({"message": "Employee created successfully, check your email."}, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(method='PATCH', request_body=UpdateEmployeeSerializer)
 @api_view(['PATCH'])
