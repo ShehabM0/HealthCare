@@ -122,6 +122,9 @@ def ListCards(req):
 @swagger_auto_schema(method='POST', request_body=AddPurchaseSerializer)
 @api_view(['POST'])
 def AddPurchase(req):
+    if not req.path: # calling it inside a view
+        req = req._request
+
     user = req.user
     if not user.is_authenticated:
         return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
