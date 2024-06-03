@@ -44,7 +44,7 @@ class ListAllClinics(APIView):
         clinics = Clinic.objects.all()
         response = []
         for clinic in clinics:
-            clinic_doctor = User.objects.filter(clinic=clinic, type='D').first()
+            clinic_doctor = Employee.objects.filter(clinic=clinic, type='D').first()
             serializer = ClinicSerializer(clinic).data
             serializer['doctor'] = DoctorSerializer(clinic_doctor).data
             response.append(serializer)
