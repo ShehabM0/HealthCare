@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'verification_code',
     'patients',
+    'pharmacy',
     'doctors',
     'payment',
     'nurses',

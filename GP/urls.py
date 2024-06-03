@@ -47,6 +47,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('verification-code/', include('verification_code.urls')),
+    path('pharmacy/', include('pharmacy.urls')),
     path('patients/',include('patients.urls')),
     path('payment/', include('payment.urls')),
     path('users/', include('users.urls')),
