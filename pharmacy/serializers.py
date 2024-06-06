@@ -39,7 +39,7 @@ class ListPrescriptionItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PrescriptionItem
-        fields = ['medication', 'instructions']
+        fields = ['id', 'medication', 'instructions']
 
     def get_medication(self, obj):
         res = obj.medication.name

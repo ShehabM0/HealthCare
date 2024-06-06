@@ -1,5 +1,6 @@
+from rest_framework.decorators import api_view, permission_classes
 from .models import MedicationCategory, Medication, Prescription
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.core.paginator import Paginator
@@ -12,6 +13,7 @@ from django.http import HttpRequest
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListMedications(req):
     req_page_number = req.GET.get("page")
     if not req_page_number:
@@ -36,7 +38,9 @@ def ListMedications(req):
         return Response({"data": [], "count": 0}, status=status.HTTP_404_NOT_FOUND)
     return Response({"data": serializer.data, "count": len(serializer.data)})
 
+@swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListRelatedMedications(req, medication_id):
     try:
         medicaiton = Medication.objects.get(id=medication_id)
@@ -51,6 +55,7 @@ def ListRelatedMedications(req, medication_id):
 
 @swagger_auto_schema(method='POST', request_body=PrescriptionSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def CreatePrescription(req, patient_id):
     doctor_id = req.user.id
     try:
@@ -71,6 +76,7 @@ def CreatePrescription(req, patient_id):
 
 @swagger_auto_schema(method='POST', request_body=PrescriptionItemSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def AddToPrescription(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -95,9 +101,10 @@ def AddToPrescription(req, prescription_id):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
-def RemoveFromPrescription(req, prescription_item_id):
+@permission_classes([IsAuthenticated])
+def RemoveFromPrescription(req, prescription_id, prescription_item_id):
     try:
-        prescription_item = PrescriptionItem.objects.get(id=prescription_item_id).delete()
+        prescription_item = PrescriptionItem.objects.get(id=prescription_item_id, prescription=prescription_id).delete()
     except PrescriptionItem.DoesNotExist:
         return Response({"message": "Prescription item not found!"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -105,6 +112,7 @@ def RemoveFromPrescription(req, prescription_item_id):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def ClearPrescription(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -118,6 +126,7 @@ def ClearPrescription(req, prescription_id):
 
 @swagger_auto_schema(method='POST')
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def AddPrescriptionPurchase(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -143,6 +152,7 @@ def AddPrescriptionPurchase(req, prescription_id):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListPatientPrescriptions(req, patient_id):
     try:
         patient = User.objects.get(id=patient_id)
@@ -155,6 +165,7 @@ def ListPatientPrescriptions(req, patient_id):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListPrescriptionItems(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
