@@ -48,12 +48,14 @@ class ListAllClinics(APIView):
         clinics = Clinic.objects.all()
         response = []
         for clinic in clinics:
-            clinic_doctor = Employee.objects.filter(clinic=clinic, type='D').first()
-            print(clinic_doctor)
-            clinic_doctor_user_obj = User.objects.filter(employee=clinic_doctor.id).first()
-            serializer = ClinicSerializer(clinic).data
-            serializer['doctor'] = DoctorSerializer(clinic_doctor_user_obj).data
-            response.append(serializer)
+            try:
+                clinic_doctor = Employee.objects.filter(clinic=clinic, type='D').get()
+                clinic_doctor_user_obj = User.objects.filter(employee=clinic_doctor.id).first()
+                serializer = ClinicSerializer(clinic).data
+                serializer['doctor'] = DoctorSerializer(clinic_doctor_user_obj).data
+                response.append(serializer)
+            except Employee.DoesNotExist:
+                return Response({"message": "Clinic does not have a doctor please refer to database and fix the data error"}, status=500)
         return Response(response)
     
 class GetClinicWorkingHours(APIView):
