@@ -53,7 +53,8 @@ class ChatConsumer(WebsocketConsumer):
         self.send(
             text_data=json.dumps({
                 'type': 'send_message',
-                'message': message
+                'message': message,
+                'user': self.user.username
         }))
 
     def disconnect(self):

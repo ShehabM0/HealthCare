@@ -135,12 +135,19 @@ WSGI_APPLICATION = 'GP.wsgi.application'
 ASGI_APPLICATION = 'GP.asgi.application'
 
 # real-time communication 
+# CHANNEL_LAYERS = {
+#     'default':{
+#         'BACKEND':'channels.layers.InMemoryChannelLayer'
+#     }
+# }
 CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.environ.get('REDIS_URL')],
+        },
+    },
 }
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
