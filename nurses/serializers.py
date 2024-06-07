@@ -17,17 +17,44 @@ class ReservationsSerializer(serializers.ModelSerializer):
         fields = ['id', 'number_in_qeue', 'type', 'patient']
         depth = 1        
 
-# class CallsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Calls
-#         fields ='__all__'
-#         depth = 1      
+   ############################# Room
 
-# class RoomSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Room
-#         fields ='__all__'
-#         depth = 1        
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields ='__all__'
+        depth = 1        
+
+
+
+class GetRoomSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30, required=False)
+    def validate(self, data):
+        if 'name' not in data :
+            raise serializers.ValidationError({"message": "'name' must be provided"})
+        return data
+    
+
+class BesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bed
+        fields ='__all__'
+        depth = 1  
+
+###################################  Calls
+
+
+
+
+class CallsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Calls
+        fields ='__all__'
+        depth = 1   
+
+
+
+
 
 # class PreserveCallSerializer(serializers.Serializer):
 #     room_id = serializers.IntegerField()
