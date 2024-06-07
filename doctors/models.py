@@ -1,12 +1,11 @@
 from django.db import models
-from patients.models import User
 # Create your models here.
 
 
 class Clinic(models.Model):
     statuses = [
         ('A', 'Available'),
-        ('C', 'Canceled'),
+        ('C', 'Closed'),
 
     ]
     name = models.CharField(max_length=100)

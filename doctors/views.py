@@ -9,6 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions
 from .permissions import IsDoctor
 from common.utils import get_status_word
+from hr.models import Employee
 
 
 class ListClinicsView(generics.ListCreateAPIView):
@@ -39,24 +40,31 @@ class ListWorkingHoursView(generics.ListAPIView):
 
 
     
+
+    # if clinic doesn't have a doctor will throw error 500
 class ListAllClinics(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
     def get(self, request):
         clinics = Clinic.objects.all()
         response = []
         for clinic in clinics:
             clinic_doctor = Employee.objects.filter(clinic=clinic, type='D').first()
+            print(clinic_doctor)
+            clinic_doctor_user_obj = User.objects.filter(employee=clinic_doctor.id).first()
             serializer = ClinicSerializer(clinic).data
-            serializer['doctor'] = DoctorSerializer(clinic_doctor).data
+            serializer['doctor'] = DoctorSerializer(clinic_doctor_user_obj).data
             response.append(serializer)
         return Response(response)
     
 class GetClinicWorkingHours(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
     def get(self,request, clinic_id):
         working_hours = WorkingHour.objects.filter(clinic_id=clinic_id, day__gte=datetime.now())
         serializer = WorkingHourSerializer(working_hours, many=True)
         return Response(serializer.data)
 
 class UpdateClinicStatus(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
     @swagger_auto_schema(request_body=updateClinicStatusSerializer)
     def patch(self, request, clinic_id):
         try:
@@ -73,12 +81,12 @@ class UpdateClinicStatus(APIView):
     
 
 class DoctorCasesView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
 
     def get(self, request):
         user = request.user
-        working_hour = WorkingHour.objects.filter(clinic_id=user.clinic, day__gte=datetime.now()).first()
-        cases = Reservation.objects.filter(clinic = user.clinic, status='A' , working_hour=working_hour)
+        working_hour = WorkingHour.objects.filter(clinic_id=user.employee.clinic, day__gte=datetime.now()).first()
+        cases = Reservation.objects.filter(clinic = user.employee.clinic, working_hour=working_hour)
         serializer = CaseSerializer(cases, many=True)
         return Response({"data": serializer.data , "count": cases.count()})
     
@@ -88,8 +96,7 @@ class UserDetails(APIView):
 
     def get(self, request, id):
         try:
-            user = User.objects.get(id=id, type='P')
-            # status_types is like [('',''),('','')]
+            user = User.objects.get(id=id)
             user.status = get_status_word(user.status, User.STATUS_TYPES)
             user.gender = get_status_word(user.gender, User.STATUS_TYPES)
         except User.DoesNotExist:
@@ -100,9 +107,9 @@ class UserDetails(APIView):
     
 class PatientMedicalRecordView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsDoctor]
-
-    def get(self, request, id):
-        user = User.objects.filter(id=id, type='P').first()
+    
+    def get(self, request, patient_id):
+        user = User.objects.filter(id=patient_id).first()
         medicalRecords = MedicalRecord.objects.filter(patient=user)
         for file in medicalRecords:
             file.type = get_status_word(file.type, MedicalRecord.FILE_TYPES)
