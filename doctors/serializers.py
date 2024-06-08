@@ -29,7 +29,7 @@ class WorkingHourSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'id']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
 class updateClinicStatusSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=1, required=False)
@@ -40,7 +40,7 @@ class updateClinicStatusSerializer(serializers.Serializer):
             raise serializers.ValidationError({"message": "At least one of 'price' or 'status' must be provided"})
         
         if 'status' in data and data['status'] not in ['A', 'C']:
-            raise serializers.ValidationError({"status": "Invalid status"})
+            raise serializers.ValidationError({"status": "Status should be (A)vailable or (C)losed"})
         
         if 'price' in data and data['price'] is not None and data['price'] < 0:
             raise serializers.ValidationError({"price": "Invalid price"})

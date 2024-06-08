@@ -14,5 +14,5 @@ urlpatterns = [
     path('clinic/<int:clinic_id>', UpdateClinicStatus.as_view()),
     path('patient/<int:id>', UserDetails.as_view()),
     path('cases/', DoctorCasesView.as_view()),
-    path('records/<int:id>' , PatientMedicalRecordView.as_view()),
+    path('records/<int:patient_id>' , PatientMedicalRecordView.as_view()),
 ]

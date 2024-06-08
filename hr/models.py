@@ -1,4 +1,5 @@
 from django.db import models
+from doctors.models import Clinic
 
 class Employee(models.Model):
     USER_TYPES = [
@@ -54,6 +55,8 @@ class Employee(models.Model):
     salary = models.PositiveIntegerField(null=True)
     hired_at = models.DateTimeField()
     updated_at = models.DateTimeField(auto_now=True)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True, blank=True)
+
 
     def __str__(self):
         type_full_str = None
