@@ -44,8 +44,8 @@ class Bed(models.Model):
     patients = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patients',null=True,blank=True)
     doctors = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='doctors',null=True,blank=True)
     nurses = models.ForeignKey(User,  on_delete=models.CASCADE, related_name='nurses',null=True,blank=True)
-    reserved_from = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
-    reserved_until = models.CharField(max_length=30 ,null=True,blank=True)
+    reserved_from = models.DateTimeField( default=f'{timezone.now().strftime("%m/%d/%Y %H:%M")}')
+    reserved_until = models.DateTimeField( null=True,blank=True)
 
 
 

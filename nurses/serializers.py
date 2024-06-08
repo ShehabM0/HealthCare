@@ -41,6 +41,49 @@ class BesSerializer(serializers.ModelSerializer):
         fields ='__all__'
         depth = 1  
 
+
+class updateRoomSerializer(serializers.Serializer):
+    number_in_room = serializers.CharField(max_length=13, required=False)
+    room_status = serializers.IntegerField(required=False)
+    # incharge=serializers.CharField(max_length=13, required=False)
+    bed_status  =serializers.CharField(max_length=13, required=False)
+    disease=serializers.CharField(max_length=13, required=False)
+    treatment=serializers.CharField(max_length=13, required=False)
+    descrption=serializers.CharField(max_length=13, required=False)
+    # patients
+    # doctors
+    # nurses
+    reserved_from=serializers.DateTimeField(required=False)
+    reserved_until=serializers.DateTimeField(required=False)
+
+    def validate(self, data):
+        if 'room_status' not in data and 'number_in_room' not in data and 'incharge' not in data:
+            raise serializers.ValidationError({"message": "At least one of 'number_in_room' or 'room_status' or 'incharge' must be provided"})
+        
+        if 'room_status' in data and data['room_status'] not in ['Occupied', 'Full','Book','Empty']:
+            raise serializers.ValidationError({"room_status": "Invalid status"})
+        
+        if 'bed_status' in data and data['bed_status'] not in ['Occupied', 'CheckOut','Booked','Empty']:
+            raise serializers.ValidationError({"room_status": "Invalid status"})
+        
+        if 'number_in_room' in data and data['number_in_room'] is not None and data['number_in_room'] <= 3:
+            raise serializers.ValidationError({"number_in_room": "Invalid number_in_room max number id{max}"})
+        
+        if 'treatment' in data and len(data['treatment']) <= 13:
+            raise serializers.ValidationError({"treatment": "Invalid treatment be at least 8 characters."}) 
+        
+        if 'disease' in data and len(data['disease']) <= 13:
+            raise serializers.ValidationError({"disease": "Invalid diseasemust be at least 8 characters."})      
+          
+        if 'descrption' in data and len(data['descrption']) <= 100:
+            raise serializers.ValidationError({"descrption": "Invalid descrption be at least 100 characters."})           
+
+        # if 'incharge' in data and data['incharge'] is not None and data['incharge'] is not Employee:
+        #     raise serializers.ValidationError({"incharge": "Invalid incharge"})
+        return data
+
+
+
 ###################################  Calls
 
 
