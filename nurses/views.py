@@ -54,7 +54,7 @@ class GetCurrentRoom(APIView):
           except bed.DoesNotExist:
               return Response({"message": "bed {room_id} dosen't exist"}, status=status.HTTP_404_NOT_FOUND)
           serializerRoom = RoomSerializer(room, many=True)
-          serializerBed = BesSerializer(bed, many=True)
+          serializerBed = BedSerializer(bed, many=True)
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
 
 class GetRoomsHistory(APIView):
@@ -69,7 +69,7 @@ class GetRoomsHistory(APIView):
           except bed.DoesNotExist:
               return Response({"message": "bed {room_id} dosen't exist"}, status=status.HTTP_404_NOT_FOUND)
           serializerRoom = RoomSerializer(room, many=True)
-          serializerBed = BesSerializer(bed, many=True)
+          serializerBed = BedSerializer(bed, many=True)
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
 
 
@@ -85,7 +85,7 @@ class GetBookedRoom(APIView):
           except bed.DoesNotExist:
               return Response({"message": "bed {room_id} dosen't exist"}, status=status.HTTP_404_NOT_FOUND)
           serializerRoom = RoomSerializer(room, many=True)
-          serializerBed = BesSerializer(bed, many=True)
+          serializerBed = BedSerializer(bed, many=True)
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
     
 
@@ -116,7 +116,7 @@ class UpdateRoom(APIView):
             bed.reserved_until= serializer.data.get('reserved_until', bed.reserved_until)
             room.save()
             bed.save()
-            return Response({"message": "Room data updated successfully", "data" : RoomSerializer(room).data,"Bed":BesSerializer(bed)})
+            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(room).data,"Bed":BedSerializer(bed).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
@@ -137,8 +137,8 @@ class AddRoom(APIView):
         if serializer.is_valid():
 
   
-            Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room),
-            Oldroom.status = serializer.data.get('room_status',  Oldroom.status),
+            Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
+            Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
             
 
             NewBed=Bed(
@@ -153,8 +153,12 @@ class AddRoom(APIView):
             )
             Oldroom.save()
             NewBed.save()
-            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BesSerializer(bed)})
+            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BedSerializer(bed).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+
+
+
+
 
 
 

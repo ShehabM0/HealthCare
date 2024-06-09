@@ -42,7 +42,7 @@ class GetRoomSerializer(serializers.Serializer):
         return data
     
 
-class BesSerializer(serializers.ModelSerializer):
+class BedSerializer(serializers.ModelSerializer):
     patients = UserSerializer()
     doctors = UserSerializer()
     nurses = UserSerializer()
