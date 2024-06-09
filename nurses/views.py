@@ -10,7 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 class GetProfile(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self,req):        
         Nurse = req.user
@@ -19,7 +19,7 @@ class GetProfile(APIView):
     
 
 class GetPatientsClinic(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
           try:
@@ -33,7 +33,7 @@ class GetPatientsClinic(APIView):
 
 ################################## Room 
 class GetAllRooms(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
         
@@ -43,7 +43,7 @@ class GetAllRooms(APIView):
 
 
 class GetCurrentRoom(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req,room_id):
           try:
@@ -58,7 +58,7 @@ class GetCurrentRoom(APIView):
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
 
 class GetRoomsHistory(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req,room_id):
           try:
@@ -74,7 +74,7 @@ class GetRoomsHistory(APIView):
 
 
 class GetBookedRoom(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req,room_id):
           try:
@@ -90,7 +90,7 @@ class GetBookedRoom(APIView):
     
 
 class UpdateRoom(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
       
     def patch(self, req, bed_id):
@@ -118,7 +118,7 @@ class UpdateRoom(APIView):
 ########################################Calls
 
 class GetAllCalls(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
           try:
@@ -129,7 +129,7 @@ class GetAllCalls(APIView):
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
 
 class GetCalls(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req,Call_id):
           try:
@@ -141,7 +141,7 @@ class GetCalls(APIView):
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
     
 class GetCurrentCalls(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
           try:
@@ -153,7 +153,7 @@ class GetCurrentCalls(APIView):
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
     
 class GetCallsHistory(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def get(self, req):
           try:

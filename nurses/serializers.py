@@ -3,7 +3,12 @@ from rest_framework.exceptions import ValidationError
 from .models import *
 from rest_framework.response import Response
 from patients.models import *
+  
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email']  
 
 class NurseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +17,7 @@ class NurseSerializer(serializers.ModelSerializer):
 
 
 class ReservationsSerializer(serializers.ModelSerializer):
+    patient = UserSerializer()
     class Meta:
         model = Reservation
         fields = ['id', 'number_in_qeue', 'type', 'patient']
