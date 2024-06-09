@@ -89,33 +89,77 @@ class GetBookedRoom(APIView):
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
     
 
-# class UpdateRoom(APIView):
-#     permission_classes = [permissions.IsAuthenticated,IsNurse]
+class UpdateRoom(APIView):
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
-      
-#     def patch(self, req, bed_id):
-#         try:    
-#             bed =   Bed.objects.get(id =bed_id )
-#             room =   Room.objects.get( Room=bed.room )
-#         # except room.DoesNotExist:
-#         #     return Response({"message": "Room does not exist"},  status=status.HTTP_404_NOT_FOUND)
-#         except bed.DoesNotExist:
-#             return Response({"message": "Bed does not exist"},  status=status.HTTP_404_NOT_FOUND)
+    def patch(self, req, bed_id):
+        try:    
+            bed =   Bed.objects.get(id =bed_id )
+            room =   Room.objects.get( id=bed.room.pk )
+        except room.DoesNotExist:
+            return Response({"message": "Room does not exist"},  status=status.HTTP_404_NOT_FOUND)
+        except bed.DoesNotExist:
+            return Response({"message": "Bed does not exist"},  status=status.HTTP_404_NOT_FOUND)
         
-#         serializer = updateRoomSerializer(data=req.data)
-#         if serializer.is_valid():
+        serializer = updateRoomSerializer(data=req.data)
+        if serializer.is_valid():
+
+
+            room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
+            room.status = serializer.data.get('room_status',  room.status)
+
+            bed.status  = serializer.data.get('bed_status', bed.status)
+            bed.disease= serializer.data.get('disease', bed.disease)
+            bed.treatment= serializer.data.get('treatment', bed.treatment)
+            bed.descrption= serializer.data.get('descrption', bed.descrption)
+            bed.reserved_from= serializer.data.get('reserved_from', bed.reserved_from)
+            bed.reserved_until= serializer.data.get('reserved_until', bed.reserved_until)
+            room.save()
+            bed.save()
+            return Response({"message": "Room data updated successfully", "data" : RoomSerializer(room).data,"Bed":BesSerializer(bed)})
+        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+
+
+
+class AddRoom(APIView):
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
+
+    def post(self, req, bed_id):
+        try:    
+            bed =   Bed.objects.get(id =bed_id )
+            Oldroom =   Room.objects.get( id=bed.room.pk )
+        except Oldroom.DoesNotExist:
+            return Response({"message": "Room does not exist"},  status=status.HTTP_404_NOT_FOUND)
+        except bed.DoesNotExist:
+            return Response({"message": "Bed does not exist"},  status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = updateRoomSerializer(data=req.data)
+        if serializer.is_valid():
+
+  
+            Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room),
+            Oldroom.status = serializer.data.get('room_status',  Oldroom.status),
             
-#             room.save()
-#             bed.save()
-#             return Response({"message": "Room data updated successfully", "data" : RoomSerializer(room).data})
-#         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
-
-
+            NewBed=Bed(
+                name=bed.name,
+                room=bed.room,
+                status  = serializer.data.get('bed_status', bed.status),
+                disease= serializer.data.get('disease', bed.disease),
+                treatment= serializer.data.get('treatment', bed.treatment),
+                descrption= serializer.data.get('descrption', bed.descrption),
+                reserved_from= serializer.data.get('reserved_from', bed.reserved_from),
+                reserved_until= serializer.data.get('reserved_until', bed.reserved_until),
+            )
+            Oldroom.save()
+            NewBed.save()
+            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BesSerializer(bed)})
+        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
 
 ########################################Calls
+
 
 class GetAllCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
@@ -127,6 +171,7 @@ class GetAllCalls(APIView):
               return Response({"message": "there is no Calls right now"}, status=status.HTTP_404_NOT_FOUND)
           serializer = CallsSerializer(Call, many=True)
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
+
 
 class GetCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
@@ -140,6 +185,7 @@ class GetCalls(APIView):
           serializer = CallsSerializer(Call, many=True)
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
     
+
 class GetCurrentCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
@@ -152,6 +198,7 @@ class GetCurrentCalls(APIView):
           serializer = CallsSerializer(Call, many=True)
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
     
+
 class GetCallsHistory(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
@@ -166,15 +213,48 @@ class GetCallsHistory(APIView):
     
 
     
-# class CreateCalls(APIView):
-#     permission_classes = [permissions.IsAuthenticated,IsNurse]
+class CreateCalls(APIView):
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
 
-#     def post(self, req):
-#           serializer = PreserveCallSerializer(data=req.data)
-#           if serializer.is_valid():
-              
-#               Nurse = req.user
-#               Call =   Calls.objects.filter(nurse = Nurse, status='P' )
-#               return Response({"message": "Call Created successfully"}, status=status.HTTP_200_OK)
-#           else:
-#             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, req):
+          
+          serializer = CreateCallSerializer(data=req.data)
+          
+          if serializer.is_valid():
+                call=Calls(
+                    type= serializer.data.get('type'),
+                    status  = serializer.data.get('status'),
+                    disease= serializer.data.get('disease'),
+                    treatment= serializer.data.get('treatment'),
+                    descrption= serializer.data.get('descrption'),
+                    date= serializer.data.get('date'),
+                )
+
+                call.save()
+                return Response({"message": "Room data updated successfully", "Call" : CallsSerializer(call).data})
+          return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+
+
+class UpdateCall(APIView):
+    permission_classes = [permissions.IsAuthenticated,IsNurse]
+
+    def patch(self, req, Call_id):
+        try:    
+            call =   Calls.objects.get(id =Call_id )
+        except call.DoesNotExist:
+            return Response({"message": "cal does not exist"},  status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CreateCallSerializer(data=req.data)
+        if serializer.is_valid():
+
+            call.type = serializer.data.get('type',  call.type)
+            call.status  = serializer.data.get('status', call.status)
+            call.disease= serializer.data.get('disease', call.disease)
+            call.treatment= serializer.data.get('treatment', call.treatment)
+            call.descrption= serializer.data.get('descrption', call.descrption)
+            call.date= serializer.data.get('date', call.date)
+
+            call.save()
+            return Response({"message": "Call data updated successfully", "data" : CallsSerializer(call).data})
+        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+

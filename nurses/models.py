@@ -69,7 +69,7 @@ class Calls(models.Model):
     patients = models.ForeignKey(User,  on_delete=models.CASCADE,related_name='patients_call')
     doctors = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='doctors_call')
     nurse = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='nurses_call')
-    date = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    date = models.DateTimeField( default=f'{timezone.now().strftime("%m/%d/%Y %H:%M")}')
     bed=models.ForeignKey(Bed, on_delete=models.CASCADE, related_name='Beds_call')
 
 
