@@ -89,26 +89,26 @@ class GetBookedRoom(APIView):
           return Response({"RoomData": serializerRoom.data,"BedDate":serializerBed.data}) 
     
 
-class UpdateRoom(APIView):
-    permission_classes = [permissions.IsAuthenticated,IsNurse]
+# class UpdateRoom(APIView):
+#     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
       
-    def patch(self, req, bed_id):
-        try:    
-            bed =   Bed.objects.get(id =bed_id )
-            room =   Room.objects.get( Room=bed.room )
-        # except room.DoesNotExist:
-        #     return Response({"message": "Room does not exist"},  status=status.HTTP_404_NOT_FOUND)
-        except bed.DoesNotExist:
-            return Response({"message": "Bed does not exist"},  status=status.HTTP_404_NOT_FOUND)
+#     def patch(self, req, bed_id):
+#         try:    
+#             bed =   Bed.objects.get(id =bed_id )
+#             room =   Room.objects.get( Room=bed.room )
+#         # except room.DoesNotExist:
+#         #     return Response({"message": "Room does not exist"},  status=status.HTTP_404_NOT_FOUND)
+#         except bed.DoesNotExist:
+#             return Response({"message": "Bed does not exist"},  status=status.HTTP_404_NOT_FOUND)
         
-        serializer = updateRoomSerializer(data=req.data)
-        if serializer.is_valid():
+#         serializer = updateRoomSerializer(data=req.data)
+#         if serializer.is_valid():
             
-            room.save()
-            bed.save()
-            return Response({"message": "Room data updated successfully", "data" : RoomSerializer(room).data})
-        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+#             room.save()
+#             bed.save()
+#             return Response({"message": "Room data updated successfully", "data" : RoomSerializer(room).data})
+#         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
 
