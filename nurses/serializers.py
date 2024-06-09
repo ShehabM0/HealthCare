@@ -26,6 +26,7 @@ class ReservationsSerializer(serializers.ModelSerializer):
    ############################# Room
 
 class RoomSerializer(serializers.ModelSerializer):
+    incharge = UserSerializer()
     class Meta:
         model = Room
         fields ='__all__'
@@ -42,6 +43,9 @@ class GetRoomSerializer(serializers.Serializer):
     
 
 class BesSerializer(serializers.ModelSerializer):
+    patients = UserSerializer()
+    doctors = UserSerializer()
+    nurses = UserSerializer()
     class Meta:
         model = Bed
         fields ='__all__'
@@ -96,6 +100,9 @@ class updateRoomSerializer(serializers.Serializer):
 
 
 class CallsSerializer(serializers.ModelSerializer):
+    patients = UserSerializer()
+    doctors = UserSerializer()
+    nurse = UserSerializer()
     class Meta:
         model = Calls
         fields ='__all__'
