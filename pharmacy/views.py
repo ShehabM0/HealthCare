@@ -11,9 +11,16 @@ from .serializers import *
 from payment.views import AddPurchase
 from django.http import HttpRequest
 
+@swagger_auto_schema(method='POST', request_body=AddMedicationSerializer)
 @swagger_auto_schema(method='GET')
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
+def Medications(req):
+    if req.method == 'GET':
+        return ListMedications(req)
+    elif req.method == 'POST':
+        return AddMedication(req)
+    
 def ListMedications(req):
     req_page_number = req.GET.get("page")
     if not req_page_number:
@@ -37,6 +44,14 @@ def ListMedications(req):
     if page_number > paginator.num_pages:
         return Response({"data": [], "count": 0}, status=status.HTTP_404_NOT_FOUND)
     return Response({"data": serializer.data, "count": len(serializer.data)})
+
+def AddMedication(req):
+    serializer = AddMedicationSerializer(data=req.data)
+    if not serializer.is_valid():
+        return Response({"message": "Medication not added!", "errros": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer.save()
+    return Response({"message": "Medication added successfully.", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
@@ -75,8 +90,15 @@ def CreatePrescription(req, patient_id):
     return Response({"message": "Prescription created successfully.", "data": serializer.data}, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(method='POST', request_body=PrescriptionItemSerializer)
-@api_view(['POST'])
+@swagger_auto_schema(method='GET')
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
+def PrescriptionsItems(req, prescription_id):
+    if req.method == 'GET':
+        return ListPrescriptionItems(req, prescription_id)
+    elif req.method == 'POST':
+        return AddToPrescription(req, prescription_id)
+
 def AddToPrescription(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -98,6 +120,16 @@ def AddToPrescription(req, prescription_id):
     )
 
     return Response({"message": "Item added successfully."}, status=status.HTTP_201_CREATED)
+
+def ListPrescriptionItems(req, prescription_id):
+    try:
+        prescription = Prescription.objects.get(id=prescription_id)
+        prescription_items = prescription.items.all()
+    except Prescription.DoesNotExist:
+        return Response({"message": "Prescription not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ListPrescriptionItemSerializer(prescription_items, many=True)
+    return Response({"data": serializer.data})
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
@@ -122,8 +154,6 @@ def ClearPrescription(req, prescription_id):
 
     return Response({"message":"Prescriptions items deleted."}, status=status.HTTP_200_OK)
 
-
-
 @swagger_auto_schema(method='POST')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -146,9 +176,11 @@ def AddPrescriptionPurchase(req, prescription_id):
         "amount": total_cost
     }
     response = AddPurchase(django_request)
+    if response.status_code == 200:
+        prescription.purchased = True
+        prescription.save()
 
     return response
-
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
@@ -163,15 +195,134 @@ def ListPatientPrescriptions(req, patient_id):
     serializer = ListPrescriptionSerializer(patient_prescriptions, many=True)
     return Response({"data": serializer.data})
 
+
+############################ pharmacist ############################
+
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def ListPrescriptionItems(req, prescription_id):
+def VerifyPrescriptionPurchase(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
-        prescription_items = prescription.items.all()
     except Prescription.DoesNotExist:
         return Response({"message": "Prescription not found!"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ListPrescriptionItemSerializer(prescription_items, many=True)
+    res = { 
+        "message": "Prescription hasn't been purhased yet!",
+        "purchased": False
+    }
+
+    if prescription.purchased:
+        res["message"] = "Prescription is purhased."
+        res["purchased"] = True
+        prescription.purchased = False
+        prescription.save()
+
+    return Response(res, status=status.HTTP_200_OK)
+
+
+@swagger_auto_schema(methods=['GET', 'DELETE'])
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def MedicationCategories(req, medication_id, category_id):
+    if req.method == 'GET':
+        return AddMedicationCategory(req, medication_id, category_id)
+    elif req.method == 'DELETE':
+        return RemoveMedicationCategory(req, medication_id, category_id)
+
+def AddMedicationCategory(req, medication_id, category_id):
+    try:
+        medicaiton = Medication.objects.get(id=medication_id)
+    except Medication.DoesNotExist:
+        return Response({"message": "Medication not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        category = MedicationCategory.objects.get(id=category_id)
+    except MedicationCategory.DoesNotExist:
+        return Response({"message": "Medication Category not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    medicaiton.category.add(category)
+
+    categories = medicaiton.category.all()
+    serializer = MedicationCategorySerilaizer(categories, many=True)
+
+    return Response({"message": "Category added to medication successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
+
+def RemoveMedicationCategory(req, medication_id, category_id):
+    try:
+        medicaiton = Medication.objects.get(id=medication_id)
+    except Medication.DoesNotExist:
+        return Response({"message": "Medication not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        category = MedicationCategory.objects.get(id=category_id)
+    except MedicationCategory.DoesNotExist:
+        return Response({"message": "Medication Category not found!"}, status=status.HTTP_404_NOT_FOUND)
+    
+    category_exist = medicaiton.category.filter(id=category_id).exists()
+    
+    if not category_exist:
+        return Response({"message": "Category doesn't belong to specified medication!"}, status=status.HTTP_404_NOT_FOUND)
+    
+    medicaiton.category.remove(category)
+
+    categories = medicaiton.category.all()
+    serializer = MedicationCategorySerilaizer(categories, many=True)
+
+    return Response({"message": "Category removed from medication successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
+
+@swagger_auto_schema(method='GET')
+@swagger_auto_schema(method='PATCH', request_body=AddMedication)
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def MedicationsID(req, medication_id):
+    if req.method == 'GET':
+        return GetMedication(req, medication_id)
+    elif req.method == 'PATCH':
+        return UpdateMedication(req, medication_id)
+
+def GetMedication(req, medication_id):
+    try:
+        medicaiton = Medication.objects.get(id=medication_id)
+    except Medication.DoesNotExist:
+        return Response({"message": "Medication not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = MedicationSerializer(medicaiton)
+
     return Response({"data": serializer.data})
+
+def UpdateMedication(req, medication_id):
+    try:
+        medicaiton = Medication.objects.get(id=medication_id)
+    except Medication.DoesNotExist:
+        return Response({"message": "Medication not found!"}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = AddMedicationSerializer(medicaiton, data=req.data, partial=True)
+    if not serializer.is_valid():
+        return Response({"message": "Medication not updated!", "errros": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    serializer.save()
+    return Response({"message": "Medication updated successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
+
+@swagger_auto_schema(method='GET')
+@swagger_auto_schema(method='POST', request_body=AddMedicationCategorySerilaizer)
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def Categories(req):
+    if req.method == 'GET':
+        return ListCategories(req)
+    elif req.method == 'POST': 
+        return AddCategory(req)
+
+def ListCategories(req):
+    categories = MedicationCategory.objects.all()
+    serializer = MedicationCategorySerilaizer(categories, many=True)
+    return Response({"data": serializer.data})
+
+def AddCategory(req):
+    serializer = AddMedicationCategorySerilaizer(data=req.data)
+    if not serializer.is_valid():
+        return Response({"message": "Category not added!", "errros": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    serializer.save()
+    return Response({"message": "Category added successfully.", "data": serializer.data}, status=status.HTTP_201_CREATED)
