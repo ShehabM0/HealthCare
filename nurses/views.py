@@ -30,7 +30,20 @@ class GetPatientsClinic(APIView):
           serializer = ReservationsSerializer(PatientsReserv, many=True)
           return Response({"data": serializer.data, "count": len(serializer.data)}) 
 
+class UserDetails(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsNurse]
 
+    def get(self, request, id):
+        try:
+            user = User.objects.get(id=id)
+            # user.status = get_status_word(user.status, User.STATUS_TYPES)
+            # user.gender = get_status_word(user.gender, User.STATUS_TYPES)
+        except User.DoesNotExist:
+            return Response({"message": "User does not exist"}, status=404)
+        serializer = PatientSerializer(user)
+
+
+        return Response(serializer.data)
 ################################## Room 
 class GetAllRooms(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
