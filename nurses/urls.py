@@ -20,8 +20,7 @@ urlpatterns = [
     path('Calls/GetAll/', views.GetAllCalls.as_view(), name='AllCalls'),
     path('Calls/Create/', views.CreateCalls.as_view(), name='CreateCalls'),
     path('Calls/Update/<int:Call_id>', views.UpdateCall.as_view(), name='UpdateCall'),
-    
-    # path('Casses/Details/<int:id>', views.UserDetails.as_view(), name='UserDetails'),
+    path('Call/History/', views.GetCallsHistory.as_view(), name='UserDetails'),
     # path('Calls/Update/<int:Call_id>', views.UpdateCall.as_view(), name='UpdateCall'),
     # path('Calls/Update/<int:Call_id>', views.UpdateCall.as_view(), name='UpdateCall'),
 ]
