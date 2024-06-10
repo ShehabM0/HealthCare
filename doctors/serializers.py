@@ -1,5 +1,7 @@
 from .models import *
 from patients.models import *
+from nurses.models import *
+from rest_framework.exceptions import ValidationError
 
 from rest_framework import serializers
 
@@ -67,3 +69,150 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         model = MedicalRecord
         exclude = ['patient']
 
+
+   ############################# Room
+
+class RoomSerializer(serializers.ModelSerializer):
+    incharge = DoctorSerializer()
+    class Meta:
+        model = Room
+        fields ='__all__'
+        depth = 1        
+
+
+
+class GetRoomSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30, required=False)
+    def validate(self, data):
+        if 'name' not in data :
+            raise serializers.ValidationError({"message": "'name' must be provided"})
+        return data
+    
+
+class BedSerializer(serializers.ModelSerializer):
+    patients = DoctorSerializer()
+    doctors = DoctorSerializer()
+    nurses = DoctorSerializer()
+    class Meta:
+        model = Bed
+        fields ='__all__'
+        depth = 1  
+
+
+
+class updateRoomSerializer(serializers.Serializer):
+    number_in_room = serializers.IntegerField( required=False)
+    room_status = serializers.CharField(max_length=13,required=False)
+    incharge= serializers.IntegerField( required=False)
+    bed_status  =serializers.CharField(max_length=13, required=False)
+    disease=serializers.CharField(max_length=13, required=False)
+    treatment=serializers.CharField(max_length=13, required=False)
+    descrption=serializers.CharField(max_length=13, required=False)
+    patients= serializers.IntegerField( required=False)
+    doctors= serializers.IntegerField( required=False)
+    nurses= serializers.IntegerField( required=False)
+    reserved_from=serializers.DateTimeField(required=False)
+    reserved_until=serializers.DateTimeField(required=False)
+
+    def validate(self, data):
+        if 'room_status' not in data or 'number_in_room' not in data or 'incharge' not in data or 'bed_status' not in data or 'reserved_until' not in data or 'reserved_from' not in data or 'doctors' not in data or 'nurses' not in data or 'patients' not in data or 'disease' not in data or 'treatment' not in data or 'descrption' not in data:
+            raise serializers.ValidationError({"message": "At least one of 'number_in_room' or 'room_status' or 'incharge' or 'bed_status' or 'reserved_from' or 'reserved_until' or 'doctors' or 'nurses' or 'patients' or 'disease' or 'treatment' or 'descrption' must be provided"})
+        
+        if 'room_status' in data and data['room_status'] not in ['Occupied', 'Full','Book','Empty']:
+            raise serializers.ValidationError({"room_status": "Invalid status"})
+        
+        if 'bed_status' in data and data['bed_status'] not in ['Occupied', 'CheckOut','Booked','Empty']:
+            raise serializers.ValidationError({"room_status": "Invalid status"})
+        
+        if 'number_in_room' in data and data['number_in_room'] is not None and data['number_in_room'] > 3:
+            raise serializers.ValidationError({"number_in_room": "Invalid number_in_room max number id{max}"})
+        
+        if 'treatment' in data and len(data['treatment']) > 13:
+            raise serializers.ValidationError({"treatment": "Invalid treatment be at least 8 characters."}) 
+        
+        if 'disease' in data and len(data['disease']) > 13:
+            raise serializers.ValidationError({"disease": "Invalid diseasemust be at least 8 characters."})      
+          
+        if 'descrption' in data and len(data['descrption']) > 100:
+            raise serializers.ValidationError({"descrption": "Invalid descrption be at least 100 characters."})           
+
+
+        if not Employee.objects.filter(id=data['incharge']).exists():
+            raise ValidationError({"incharge": "doctor does not exist"})
+      
+        if not User.objects.filter(id=data['patients']).exists():
+            raise ValidationError({"patients": "patient does not exist"})
+        
+        if not Employee.objects.filter(id=data['doctors']).exists():
+            raise ValidationError({"doctors": "doctor does not exist"})
+        
+        if not Employee.objects.filter(id=data['nurse']).exists():
+            raise ValidationError({"nurse": "nurse does not exist"})
+        return data
+
+
+
+###################################  Calls
+
+
+
+
+class CallsSerializer(serializers.ModelSerializer):
+    patients = DoctorSerializer()
+    doctors = DoctorSerializer()
+    nurse = DoctorSerializer()
+    class Meta:
+        model = Calls
+        fields ='__all__'
+        depth = 1   
+
+
+
+
+
+class CreateCallSerializer(serializers.Serializer):
+    type =serializers.CharField(max_length=20, required=False)
+    room = serializers.IntegerField( required=False)
+    disease =serializers.CharField(max_length=30, required=False)
+    treatment =serializers.CharField(max_length=30, required=False)
+    status =serializers.CharField(max_length=7, required=False)
+    descrption =serializers.CharField(max_length=100, required=False)
+    patients= serializers.IntegerField( required=False)
+    doctors= serializers.IntegerField( required=False)
+    nurse= serializers.IntegerField( required=False)
+    date = serializers.DateTimeField(required=False)
+    bed= serializers.IntegerField( required=False)
+
+    def validate(self,data):
+        
+        if not Room.objects.filter(id=data['room']).exists():
+            raise ValidationError({"room": "room does not exist"})
+        
+        if not Bed.objects.filter(id=data['bed']).exists():
+            raise ValidationError({"bed": "bed does not exist"})        
+        
+        if not User.objects.filter(id=data['patients']).exists():
+            raise ValidationError({"patients": "patient does not exist"})
+        
+        if not Employee.objects.filter(id=data['doctors']).exists():
+            raise ValidationError({"doctors": "doctor does not exist"})
+        
+        if not Employee.objects.filter(id=data['nurse']).exists():
+            raise ValidationError({"nurse": "nurse does not exist"})
+        
+
+        if data['status'] not in ['Pending', 'Done']:
+            raise ValidationError("Invalid status. Must be Pending, or Done.")
+        
+        if data['type'] not in ['Surgery', 'inPatient Treatment']:
+            raise ValidationError("Invalid type. Must be Surgery, or inPatient Treatment.")
+        
+        if len(data['disease']) > 30:
+            raise ValidationError({"disease": "disease name must be at least 30 characters."})
+        
+        if len(data['treatment']) >30:
+            raise ValidationError({"treatment": "treatment name must be at least 30 characters."})
+       
+        if len(data['descrption']) > 100:
+            raise ValidationError({"descrption": "descrption must be at least 100 characters."})                
+        return data
