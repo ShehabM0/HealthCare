@@ -6,12 +6,22 @@ class MedicationCategorySerilaizer(serializers.ModelSerializer):
         model = MedicationCategory
         fields = '__all__'
 
+class AddMedicationCategorySerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicationCategory
+        fields = ('category',)
+
 class MedicationSerializer(serializers.ModelSerializer):
     category = MedicationCategorySerilaizer(many=True)
 
     class Meta:
         model = Medication
         fields = '__all__'
+
+class AddMedicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medication
+        exclude = ('category',) 
 
 class PrescriptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +54,4 @@ class ListPrescriptionItemSerializer(serializers.ModelSerializer):
     def get_medication(self, obj):
         res = obj.medication.name
         return res
+

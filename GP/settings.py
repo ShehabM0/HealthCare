@@ -20,6 +20,8 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
+DEPLOYED = os.environ.get('IS_DEPLOYED')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -135,19 +137,18 @@ WSGI_APPLICATION = 'GP.wsgi.application'
 ASGI_APPLICATION = 'GP.asgi.application'
 
 # real-time communication 
-# CHANNEL_LAYERS = {
-#     'default':{
-#         'BACKEND':'channels.layers.InMemoryChannelLayer'
-#     }
-# }
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL')],
-        },
-    },
+    'default': {
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
 }
+if DEPLOYED == 'True':
+    CHANNEL_LAYERS['default'] = {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [os.environ.get('REDIS_URL')],
+        }
+    }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -158,8 +159,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+if DEPLOYED == 'True':
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('POSTGRES_URL'))
 
-DATABASES["default"] = dj_database_url.parse("postgres://gpdatabase_user:P7wQfS0oEQKVyeJTCfvdwE4FGPBcUfMC@dpg-co5gr5cf7o1s73a1p67g-a.oregon-postgres.render.com/gpdatabase")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

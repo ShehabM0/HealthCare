@@ -80,6 +80,6 @@ class MedicalRecord(models.Model):
         ('A', 'Analysis'),
     ]
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medical_record')
-    file = models.FileField(upload_to='medical_records', null=True, blank=True)
+    file = models.FileField(upload_to='media/medical_records/', null=True, blank=True)
     type = models.CharField(max_length=1, choices=FILE_TYPES, default='P')
     
