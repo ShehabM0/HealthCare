@@ -4,12 +4,13 @@ from rest_framework import permissions
 
 app_name = 'nurses'
 
-urlpatterns = [
+urlpatterns = [   
+    path('/UserId/Get/', views.GetUserId.as_view(), name='GetUserId'),
     path('profile/', views.GetProfile.as_view(), name='profile'),
     path('Casses/', views.GetPatientsClinic.as_view(), name='Casses'),
     path('Casses/Details/<int:id>', views.UserDetails.as_view(), name='UserDetails'),
     path('Rooms/<int:room_id>', views.GetCurrentRoom.as_view(), name='Room'),
-    # path('Bed/', views.GetBed.as_view(), name='Bed'),
+ 
     path('Rooms/GetAll/', views.GetAllRooms.as_view(), name='AllRooms'),
     path('Rooms/History/<int:room_id>', views.GetRoomsHistory.as_view(), name='RoomsHistory'),
     path('Room/Booked/<int:room_id>', views.GetBookedRoom.as_view(), name='BookedRoom'),

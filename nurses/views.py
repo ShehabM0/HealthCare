@@ -7,7 +7,13 @@ from .permissions import IsNurse
 from drf_yasg.utils import swagger_auto_schema
 
 
+class GetUserId(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
+    def get(self,req):        
+        Users = User.objects.all()
+        serializer = UserIdSerializer(Users)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GetProfile(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
@@ -120,10 +126,10 @@ class UpdateRoom(APIView):
         
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
-            patients=User.objects.get(name=serializer.data.get('patients'))
-            incharge=User.objects.get(name=serializer.data.get('incharge'))
-            doctors=User.objects.get(name=serializer.data.get('doctors'))
-            nurses=User.objects.get(name=serializer.data.get('nurses'))
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
             
             room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
             room.status = serializer.data.get('room_status',  room.status)
@@ -161,10 +167,10 @@ class AddRoom(APIView):
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
 
-            patients=User.objects.get(name=serializer.data.get('patients'))
-            incharge=User.objects.get(name=serializer.data.get('incharge'))
-            doctors=User.objects.get(name=serializer.data.get('doctors'))
-            nurses=User.objects.get(name=serializer.data.get('nurses'))
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
   
             Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
             Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
@@ -263,10 +269,10 @@ class CreateCalls(APIView):
                 
                 patients=User.objects.get(id=serializer.data.get('patients'))
                 
-                doctors=User.objects.get(name=serializer.data.get('doctors'))
-                nurses=User.objects.get(name=serializer.data.get('nurses'))
-                room=Room.objects.get(name=serializer.data.get('room'))
-                bed=Bed.objects.get(name=serializer.data.get('bed'))
+                doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+                nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+                room=Room.objects.get(id=serializer.data.get('room'))
+                bed=Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
                     
                     patients=patients,
@@ -300,11 +306,11 @@ class UpdateCall(APIView):
         
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
-            patients=User.objects.get(name=serializer.data.get('patients'))
-            doctors=User.objects.get(name=serializer.data.get('doctors'))
-            nurses=User.objects.get(name=serializer.data.get('nurses'))
-            room=Room.objects.get(name=serializer.data.get('room'))
-            bed=Bed.objects.get(name=serializer.data.get('bed'))
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            room=Room.objects.get(id=serializer.data.get('room'))
+            bed=Bed.objects.get(id=serializer.data.get('bed'))
 
             call.bed=bed,
             call.room=room,

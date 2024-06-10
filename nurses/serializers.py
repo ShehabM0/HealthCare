@@ -8,8 +8,12 @@ from patients.models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email']  
+        fields = ['id', 'first_name', 'last_name', 'email'] 
 
+class UserIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name','employee']  
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -64,14 +68,14 @@ class BedSerializer(serializers.ModelSerializer):
 class updateRoomSerializer(serializers.Serializer):
     number_in_room = serializers.IntegerField( required=False)
     room_status = serializers.CharField(max_length=13,required=False)
-    incharge= serializers.CharField(max_length=30,required=False)
+    incharge= serializers.IntegerField( required=False)
     bed_status  =serializers.CharField(max_length=13, required=False)
     disease=serializers.CharField(max_length=13, required=False)
     treatment=serializers.CharField(max_length=13, required=False)
     descrption=serializers.CharField(max_length=13, required=False)
-    patients= serializers.CharField(max_length=30,required=False)
-    doctors= serializers.CharField(max_length=30,required=False)
-    nurses=serializers.CharField(max_length=30,required=False)
+    patients= serializers.IntegerField( required=False)
+    doctors= serializers.IntegerField( required=False)
+    nurses= serializers.IntegerField( required=False)
     reserved_from=serializers.DateTimeField(required=False)
     reserved_until=serializers.DateTimeField(required=False,)
 
@@ -98,20 +102,17 @@ class updateRoomSerializer(serializers.Serializer):
             raise serializers.ValidationError({"descrption": "Invalid descrption be at least 100 characters."})           
 
 
-        if not User.objects.filter(name=data['incharge']).exists():
-            if not Employee.objects.filter(User.objects.get(name=data['incharge']).employee).exists():
-               raise ValidationError({"incharge": "doctor does not exist"})
+        if not Employee.objects.filter(id=data['incharge']).exists():
+            raise ValidationError({"incharge": "doctor does not exist"})
       
-        if not User.objects.filter(name=data['patients']).exists():
+        if not User.objects.filter(id=data['patients']).exists():
             raise ValidationError({"patients": "patient does not exist"})
         
-        if not User.objects.filter(name=data['doctors']).exists():
-            if not Employee.objects.filter(User.objects.get(name=data['doctors']).employee).exists():
-                raise ValidationError({"doctors": "doctor does not exist"})
+        if not Employee.objects.filter(id=data['doctors']).exists():
+            raise ValidationError({"doctors": "doctor does not exist"})
         
-        if not User.objects.filter(name=data['nurse']).exists():
-              if not Employee.objects.filter(User.objects.get(name=data['nurse']).employee).exists():
-                raise ValidationError({"nurse": "nurse does not exist"})
+        if not Employee.objects.filter(id=data['nurse']).exists():
+            raise ValidationError({"nurse": "nurse does not exist"})
         return data
 
 
@@ -136,35 +137,33 @@ class CallsSerializer(serializers.ModelSerializer):
 
 class CreateCallSerializer(serializers.Serializer):
     type =serializers.CharField(max_length=20, required=False)
-    room = serializers.CharField(max_length=30, required=False)
+    room = serializers.IntegerField( required=False)
     disease =serializers.CharField(max_length=30, required=False)
     treatment =serializers.CharField(max_length=30, required=False)
     status =serializers.CharField(max_length=7, required=False)
     descrption =serializers.CharField(max_length=100, required=False)
-    patients= serializers.CharField(max_length=30, required=False)
-    doctors= serializers.CharField(max_length=30, required=False)
-    nurse= serializers.CharField(max_length=30, required=False)
-    date =serializers.CharField(max_length=30, required=False)
-    bed= serializers.CharField(max_length=30, required=False)
-    serializers.CharField(max_length=30, required=False)
+    patients= serializers.IntegerField( required=False)
+    doctors= serializers.IntegerField( required=False)
+    nurse= serializers.IntegerField( required=False)
+    date = serializers.DateTimeField(required=False)
+    bed= serializers.IntegerField( required=False)
+
     def validate(self,data):
         
-        if not Room.objects.filter(name=data['room']).exists():
+        if not Room.objects.filter(id=data['room']).exists():
             raise ValidationError({"room": "room does not exist"})
         
-        if not Bed.objects.filter(name=data['bed']).exists():
-            raise ValidationError({"bed": "bed does not exist"})               
-      
-        if not User.objects.filter(name=data['patients']).exists():
+        if not Bed.objects.filter(id=data['bed']).exists():
+            raise ValidationError({"bed": "bed does not exist"})        
+        
+        if not User.objects.filter(id=data['patients']).exists():
             raise ValidationError({"patients": "patient does not exist"})
         
-        if not User.objects.filter(name=data['doctors']).exists():
-            if not Employee.objects.filter(User.objects.get(name=data['doctors']).employee).exists():
-                raise ValidationError({"doctors": "doctor does not exist"})
+        if not Employee.objects.filter(id=data['doctors']).exists():
+            raise ValidationError({"doctors": "doctor does not exist"})
         
-        if not User.objects.filter(name=data['nurse']).exists():
-              if not Employee.objects.filter(User.objects.get(name=data['nurse']).employee).exists():
-                raise ValidationError({"nurse": "nurse does not exist"})
+        if not Employee.objects.filter(id=data['nurse']).exists():
+            raise ValidationError({"nurse": "nurse does not exist"})
         
 
         if data['status'] not in ['Pending', 'Done']:
