@@ -44,7 +44,7 @@ class Bed(models.Model):
     patients = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patients',null=True,blank=True)
     doctors = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='doctors',null=True,blank=True)
     nurses = models.ForeignKey(User,  on_delete=models.CASCADE, related_name='nurses',null=True,blank=True)
-    reserved_from = models.DateTimeField( default=f'{timezone.now().strftime("%m/%d/%Y %H:%M")}')
+    reserved_from = models.DateTimeField()
     reserved_until = models.DateTimeField( null=True,blank=True)
 
 
@@ -69,7 +69,7 @@ class Calls(models.Model):
     patients = models.ForeignKey(User,  on_delete=models.CASCADE,related_name='patients_call')
     doctors = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='doctors_call')
     nurse = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='nurses_call')
-    date = models.DateTimeField( default=f'{timezone.now().strftime("%m/%d/%Y %H:%M")}')
+    date = models.DateTimeField()
     bed=models.ForeignKey(Bed, on_delete=models.CASCADE, related_name='Beds_call')
 
 
