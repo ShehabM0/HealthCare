@@ -272,7 +272,7 @@ def RemoveMedicationCategory(req, medication_id, category_id):
     return Response({"message": "Category removed from medication successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(method='GET')
-@swagger_auto_schema(method='PATCH', request_body=AddMedication)
+@swagger_auto_schema(method='PATCH', request_body=AddMedicationSerializer)
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
 def MedicationsID(req, medication_id):
