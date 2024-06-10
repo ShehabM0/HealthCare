@@ -36,15 +36,19 @@ class UserDetails(APIView):
     def get(self, request, id):
         try:
             user = User.objects.get(id=id)
-            # user.status = get_status_word(user.status, User.STATUS_TYPES)
-            # user.gender = get_status_word(user.gender, User.STATUS_TYPES)
         except User.DoesNotExist:
             return Response({"message": "User does not exist"}, status=404)
         serializer = PatientSerializer(user)
 
 
         return Response(serializer.data)
+    
+
+
 ################################## Room 
+
+
+
 class GetAllRooms(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
@@ -116,11 +120,19 @@ class UpdateRoom(APIView):
         
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
-
-
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            
             room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
             room.status = serializer.data.get('room_status',  room.status)
+            room.incharge=incharge
 
+           
+            bed.patients=patients
+            bed.doctors=doctors
+            bed.nurses=nurses
             bed.status  = serializer.data.get('bed_status', bed.status)
             bed.disease= serializer.data.get('disease', bed.disease)
             bed.treatment= serializer.data.get('treatment', bed.treatment)
@@ -149,14 +161,24 @@ class AddRoom(APIView):
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
 
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
   
             Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
             Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
-            
+            Oldroom.incharge=incharge
 
             NewBed=Bed(
                 name=bed.name,
                 room=bed.room,
+
+
+                patients=patients,
+                doctors=doctors,
+                nurses=nurses,
+                
                 status  = serializer.data.get('bed_status', bed.status),
                 disease= serializer.data.get('disease', bed.disease),
                 treatment= serializer.data.get('treatment', bed.treatment),
@@ -238,7 +260,18 @@ class CreateCalls(APIView):
           serializer = CreateCallSerializer(data=req.data)
           
           if serializer.is_valid():
+                
+                patients=User.objects.get(id=serializer.data.get('patients'))
+                
+                doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+                nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+
                 call=Calls(
+                    
+                    patients=patients,
+                    doctors=doctors,
+                    nurses=nurses,
+
                     type= serializer.data.get('type'),
                     status  = serializer.data.get('status'),
                     disease= serializer.data.get('disease'),
@@ -263,6 +296,14 @@ class UpdateCall(APIView):
         
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+
+
+            call.patients=patients
+            call.doctors=doctors
+            call.nurses=nurses
 
             call.type = serializer.data.get('type',  call.type)
             call.status  = serializer.data.get('status', call.status)
