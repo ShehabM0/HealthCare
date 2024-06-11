@@ -196,9 +196,9 @@ class UpdateRoom(APIView):
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
             patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            incharge=User.objects.get(employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurses'))
             
             room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
             room.status = serializer.data.get('room_status',  room.status)
@@ -237,9 +237,9 @@ class AddRoom(APIView):
         if serializer.is_valid():
 
             patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            incharge=User.objects.get(employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurses'))
   
             Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
             Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
@@ -263,7 +263,7 @@ class AddRoom(APIView):
             )
             Oldroom.save()
             NewBed.save()
-            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BedSerializer(bed).data})
+            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BedSerializer(NewBed).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
