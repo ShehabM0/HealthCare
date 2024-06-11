@@ -4,8 +4,10 @@ from doctors.models import Clinic
 class Employee(models.Model):
     USER_TYPES = [
         ('D', 'Doctor'),
+        ('HD', 'Head Doctor'),    
         ('A', 'Admin'),
         ('N', 'Nurse'),
+        ('HN', 'Head Nurse'),
         ('H', 'Human Resources')
     ]
     SPECIALIZAION_TYPES = [
