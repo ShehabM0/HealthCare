@@ -117,8 +117,8 @@ class updateRoomSerializer(serializers.Serializer):
         if not Employee.objects.filter(id=data['doctors']).exists():
             raise ValidationError({"doctors": "doctor does not exist"})
         
-        if not Employee.objects.filter(id=data['nurse']).exists():
-            raise ValidationError({"nurse": "nurse does not exist"})
+        if not Employee.objects.filter(id=data['nurses']).exists():
+            raise ValidationError({"nurses": "nurse does not exist"})
         return data
 
 
