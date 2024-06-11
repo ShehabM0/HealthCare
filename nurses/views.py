@@ -127,9 +127,9 @@ class UpdateRoom(APIView):
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
             patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            incharge=User.objects.get(employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurses'))
             
             room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
             room.status = serializer.data.get('room_status',  room.status)
@@ -168,9 +168,9 @@ class AddRoom(APIView):
         if serializer.is_valid():
 
             patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(Employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            incharge=User.objects.get(employee=serializer.data.get('incharge'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurses'))
   
             Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
             Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
@@ -269,8 +269,8 @@ class CreateCalls(APIView):
                 
                 patients=User.objects.get(id=serializer.data.get('patients'))
                 
-                doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-                nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+                doctors=User.objects.get(employee=serializer.data.get('doctors'))
+                nurses=User.objects.get(employee=serializer.data.get('nurses'))
                 room=Room.objects.get(id=serializer.data.get('room'))
                 bed=Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
@@ -307,8 +307,8 @@ class UpdateCall(APIView):
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
             patients=User.objects.get(id=serializer.data.get('patients'))
-            doctors=User.objects.get(Employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(Employee=serializer.data.get('nurses'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurses'))
             room=Room.objects.get(id=serializer.data.get('room'))
             bed=Bed.objects.get(id=serializer.data.get('bed'))
 
