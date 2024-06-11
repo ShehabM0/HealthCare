@@ -262,7 +262,7 @@ class CreateCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def post(self, req):
-          
+          Nurse = req.user
           serializer = CreateCallSerializer(data=req.data)
           
           if serializer.is_valid():
@@ -274,10 +274,12 @@ class CreateCalls(APIView):
                 room=Room.objects.get(id=serializer.data.get('room'))
                 bed=Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
-                    
+
+                    createdBy=Nurse,
+
                     patients=patients,
                     doctors=doctors,
-                    nurses=nurses,
+                    nurse=nurses,
 
                     bed=bed,
                     room=room,
@@ -300,6 +302,7 @@ class UpdateCall(APIView):
 
     def patch(self, req, Call_id):
         try:    
+            Nurse = req.user
             call =   Calls.objects.get(id =Call_id )
         except call.DoesNotExist:
             return Response({"message": "cal does not exist"},  status=status.HTTP_404_NOT_FOUND)
@@ -314,7 +317,7 @@ class UpdateCall(APIView):
 
             call.bed=bed,
             call.room=room,
-
+            call.createdBy=Nurse
             call.patients=patients
             call.doctors=doctors
             call.nurses=nurses
