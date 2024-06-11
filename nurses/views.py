@@ -71,7 +71,7 @@ class GetCurrentRoom(APIView):
     def get(self, req,room_id):
           try:
               room =   Room.objects.filter(id =room_id )
-              bed =   Bed.objects.filter(room =room_id ,status='Empty')
+              bed =   Bed.objects.filter(room =room_id ,status='Empty')| Bed.objects.filter(room =room_id ,status='Occupied')
           except room.DoesNotExist:
               return Response({"message": "room {room_id} dosen't exist"}, status=status.HTTP_404_NOT_FOUND)
           except bed.DoesNotExist:
