@@ -71,7 +71,7 @@ class Calls(models.Model):
     nurse = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='nurses_call')
     date = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
     bed=models.ForeignKey(Bed, on_delete=models.CASCADE, related_name='Beds_call')
-    # createdBy =models.ForeignKey(User,  on_delete=models.CASCADE,related_name='call_createdBy',null=True,blank=True)
+    createdBy =models.ForeignKey(User,  on_delete=models.CASCADE,related_name='call_createdBy',null=True,blank=True)
 
 
 

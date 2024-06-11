@@ -262,7 +262,7 @@ class CreateCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def post(self, req):
-        #   Nurse = req.user
+          Nurse = req.user
           serializer = CreateCallSerializer(data=req.data)
           
           if serializer.is_valid():
@@ -275,7 +275,7 @@ class CreateCalls(APIView):
                 bed=Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
 
-                    # createdBy=Nurse,
+                    createdBy=Nurse,
 
                     patients=patients,
                     doctors=doctors,
@@ -293,7 +293,7 @@ class CreateCalls(APIView):
                 )
 
                 call.save()
-                return Response({"message": "Room data updated successfully", "Call" : CallsSerializer(call).data})
+                return Response({"message": "call data Created successfully", "Call" : CallsSerializer(call).data})
           return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
@@ -315,8 +315,8 @@ class UpdateCall(APIView):
             room=Room.objects.get(id=serializer.data.get('room'))
             bed=Bed.objects.get(id=serializer.data.get('bed'))
 
-            call.bed=bed,
-            call.room=room,
+            call.bed=bed
+            call.room=room
             # call.createdBy=Nurse
             call.patients=patients
             call.doctors=doctors
