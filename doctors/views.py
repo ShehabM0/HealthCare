@@ -331,11 +331,28 @@ class CreateCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsDoctor]
 
     def post(self, req):
-          
+        #   Nurse = req.user
           serializer = CreateCallSerializer(data=req.data)
           
           if serializer.is_valid():
+                
+                patients=User.objects.get(id=serializer.data.get('patients'))
+                
+                doctors=User.objects.get(employee=serializer.data.get('doctors'))
+                nurses=User.objects.get(employee=serializer.data.get('nurse'))
+                room=Room.objects.get(id=serializer.data.get('room'))
+                bed=Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
+
+                    # createdBy=Nurse,
+
+                    patients=patients,
+                    doctors=doctors,
+                    nurse=nurses,
+
+                    bed=bed,
+                    room=room,
+
                     type= serializer.data.get('type'),
                     status  = serializer.data.get('status'),
                     disease= serializer.data.get('disease'),
@@ -345,7 +362,7 @@ class CreateCalls(APIView):
                 )
 
                 call.save()
-                return Response({"message": "Room data updated successfully", "Call" : CallsSerializer(call).data})
+                return Response({"message": "call data Created successfully", "Call" : CallsSerializer(call).data})
           return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
@@ -354,12 +371,26 @@ class UpdateCall(APIView):
 
     def patch(self, req, Call_id):
         try:    
-            call =   Calls.objects.get(id =Call_id )
+            # Nurse = req.user
+              call =   Calls.objects.get(id =Call_id )
+
         except call.DoesNotExist:
             return Response({"message": "cal does not exist"},  status=status.HTTP_404_NOT_FOUND)
         
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
+            patients=User.objects.get(id=serializer.data.get('patients'))
+            doctors=User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=User.objects.get(employee=serializer.data.get('nurse'))
+            room=Room.objects.get(id=serializer.data.get('room'))
+            bed=Bed.objects.get(id=serializer.data.get('bed'))
+
+            call.bed=bed
+            call.room=room
+            # call.createdBy=Nurse
+            call.patients=patients
+            call.doctors=doctors
+            call.nurses=nurses
 
             call.type = serializer.data.get('type',  call.type)
             call.status  = serializer.data.get('status', call.status)
@@ -371,4 +402,5 @@ class UpdateCall(APIView):
             call.save()
             return Response({"message": "Call data updated successfully", "data" : CallsSerializer(call).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
+
 
