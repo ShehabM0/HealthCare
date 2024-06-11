@@ -12,7 +12,7 @@ class MedicationCategory(models.Model):
 
 class Medication(models.Model):
     name = models.CharField(max_length=128)
-    image = models.ImageField(upload_to='media/medicine/', blank=True, null=True)
+    image = models.ImageField(upload_to='media/medications/', blank=True, null=True)
     cost = models.PositiveSmallIntegerField()
     available = models.BooleanField()
     category = models.ManyToManyField(MedicationCategory)

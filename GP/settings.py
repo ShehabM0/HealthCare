@@ -21,6 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 DEPLOYED = os.environ.get('IS_DEPLOYED')
+DEVELOPMENT = os.environ.get('IS_DEVELOPMENT', 'False')
+
+# Render's environment variables are taking priority over local .env file
+if DEVELOPMENT == 'True': DEPLOYED = 'False'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -161,7 +165,6 @@ DATABASES = {
 }
 if DEPLOYED == 'True':
     DATABASES['default'] = dj_database_url.parse(os.environ.get('POSTGRES_URL'))
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
