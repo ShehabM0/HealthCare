@@ -194,7 +194,7 @@ class AddRoom(APIView):
             )
             Oldroom.save()
             NewBed.save()
-            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BedSerializer(bed).data})
+            return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(Oldroom).data,"Bed":BedSerializer(NewBed).data})
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
