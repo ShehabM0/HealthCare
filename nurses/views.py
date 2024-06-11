@@ -12,7 +12,7 @@ class GetUserId(APIView):
 
     def get(self,req):        
         Users = User.objects.all()
-        serializer = UserIdSerializer(Users)
+        serializer = UserIdSerializer(Users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class GetProfile(APIView):
@@ -20,7 +20,7 @@ class GetProfile(APIView):
 
     def get(self,req):        
         Nurse = req.user
-        serializer = NurseSerializer(Nurse)
+        serializer = NurseSerializer(Nurse, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
