@@ -4,6 +4,11 @@ from .models import *
 from rest_framework.response import Response
 from patients.models import *
   
+  
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['id', 'type'] 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'email'] 
 
 class UserIdSerializer(serializers.ModelSerializer):
+    employee=EmployeeSerializer()
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name','employee']  
