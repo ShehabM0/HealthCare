@@ -124,9 +124,9 @@ class PatientMedicalRecordView(APIView):
 class ReserveClinicView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(request_body=PreserveClinicSerializer)
+    @swagger_auto_schema(request_body=PreserveClinicSerializer2)
     def post(self, request):
-        serializer = PreserveClinicSerializer(data=request.data)
+        serializer = PreserveClinicSerializer2(data=request.data)
         if serializer.is_valid():
             
             number_in_qeue = Reservation.objects.filter(clinic = serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id']).count() + 1

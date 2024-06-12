@@ -74,7 +74,7 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
 
 
 
-class PreserveClinicSerializer(serializers.Serializer):
+class PreserveClinicSerializer2(serializers.Serializer):
     clinic_id = serializers.IntegerField()
     working_hour_id = serializers.IntegerField()
     patient=serializers.IntegerField( required=False)
