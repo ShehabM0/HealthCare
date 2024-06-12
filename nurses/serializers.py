@@ -41,6 +41,13 @@ class ReservationsSerializer(serializers.ModelSerializer):
         fields = ['id', 'number_in_qeue', 'type', 'patient']
         depth = 1        
 
+
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username']
+
+
    ############################# Room
 
 class RoomSerializer(serializers.ModelSerializer):

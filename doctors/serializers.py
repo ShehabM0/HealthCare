@@ -70,7 +70,10 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         exclude = ['patient']
 
 
-
+class ChatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username']
 
 
 

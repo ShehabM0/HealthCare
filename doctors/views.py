@@ -150,7 +150,22 @@ class ReserveClinicView(APIView):
 
 
 
+class DoctorChatDetails(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
 
+    def get(self, req):
+
+
+        users = User.objects.all()
+        res=[]
+        for user in users :
+            if not user.employee is None:
+                res.append(user)
+
+        serializer = ChatSerializer(res, many=True)
+
+
+        return Response(serializer.data)
 
 
 
