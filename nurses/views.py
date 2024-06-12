@@ -128,7 +128,7 @@ class UpdateRoom(APIView):
         
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
-            patients = User.objects.filter(User= Bed.objects.get(id =bed_id).patients) if serializer.data.get('patients') is None else User.objects.filter(id=serializer.data.get('patients'))
+            patients = Bed.objects.get(id =bed_id).patients if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
             incharge= Room.objects.get(id=bed.room.pk).incharge if serializer.data.get('incharge') is None else User.objects.get(employee=serializer.data.get('incharge'))
             doctors= Bed.objects.get(id =bed_id).doctors if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
             nurses= Bed.objects.get(id =bed_id).nurses if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
