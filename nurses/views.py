@@ -315,8 +315,8 @@ class UpdateCall(APIView):
             patients= None if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
             doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
             nurse= None if serializer.data.get('nurse') is None else User.objects.get(employee=serializer.data.get('nurse'))
-            room= None if serializer.data.get('room') is None else  None if serializer.data.get('patients') is None else Room.objects.get(id=serializer.data.get('room'))
-            bed= None if serializer.data.get('bed') is None else  None if serializer.data.get('patients') is None else Bed.objects.get(id=serializer.data.get('bed'))
+            room= None if serializer.data.get('room') is None else   Room.objects.get(id=serializer.data.get('room'))
+            bed= None if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
 
             call.bed=bed
             call.room=room
