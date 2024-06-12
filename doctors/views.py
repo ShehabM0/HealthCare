@@ -239,25 +239,38 @@ class UpdateRoom(APIView):
         
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
-            patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(employee=serializer.data.get('nurses'))
-            
-            room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
-            room.status = serializer.data.get('room_status',  room.status)
-            room.incharge=incharge
+            patients = None if serializer.data.get('patients') is None else User.objects.filter(id=serializer.data.get('patients'))
+            incharge=None if serializer.data.get('incharge') is None else User.objects.get(employee=serializer.data.get('incharge'))
+            doctors=None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+            nurses=None if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
 
-           
-            bed.patients=patients
-            bed.doctors=doctors
-            bed.nurses=nurses
-            bed.status  = serializer.data.get('bed_status', bed.status)
-            bed.disease= serializer.data.get('disease', bed.disease)
-            bed.treatment= serializer.data.get('treatment', bed.treatment)
-            bed.descrption= serializer.data.get('descrption', bed.descrption)
-            bed.reserved_from= serializer.data.get('reserved_from', bed.reserved_from)
-            bed.reserved_until= serializer.data.get('reserved_until', bed.reserved_until)
+
+            if  serializer.data.get('number_in_room') is not None  :           
+                room.number_in_room = serializer.data.get('number_in_room',  room.number_in_room)
+            if  serializer.data.get('room_status') is not None  :
+                room.status = serializer.data.get('room_status',  room.status)
+            if  serializer.data.get('incharge') is not None  :
+                room.incharge=incharge
+
+            if  serializer.data.get('patients') is not None  :
+                bed.patients=patients
+            if  serializer.data.get('doctors') is not None  :               
+                bed.doctors=doctors
+            if  serializer.data.get('nurses') is not None  :
+                bed.nurses=nurses
+            if  serializer.data.get('bed_status') is not None  :
+                bed.status  = serializer.data.get('bed_status', bed.status)
+            if  serializer.data.get('disease') is not None  :
+                bed.disease= serializer.data.get('disease', bed.disease)
+            if  serializer.data.get('treatment') is not None  :
+                bed.treatment= serializer.data.get('treatment', bed.treatment)
+            if  serializer.data.get('descrption') is not None  :
+                bed.descrption= serializer.data.get('descrption', bed.descrption)
+            if  serializer.data.get('reserved_from') is not None  :
+                bed.reserved_from= serializer.data.get('reserved_from', bed.reserved_from)
+            if  serializer.data.get('reserved_until') is not None  :
+                bed.reserved_until= serializer.data.get('reserved_until', bed.reserved_until)
+            
             room.save()
             bed.save()
             return Response({"message": "Room data updated successfully", "Room" : RoomSerializer(room).data,"Bed":BedSerializer(bed).data})
@@ -280,10 +293,11 @@ class AddRoom(APIView):
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
 
-            patients=User.objects.get(id=serializer.data.get('patients'))
-            incharge=User.objects.get(employee=serializer.data.get('incharge'))
-            doctors=User.objects.get(employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(employee=serializer.data.get('nurses'))
+          
+            patients= None if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
+            incharge= None if serializer.data.get('incharge') is None else User.objects.get(employee=serializer.data.get('incharge'))
+            doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+            nurses= None if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
   
             Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
             Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
@@ -380,19 +394,19 @@ class CreateCalls(APIView):
           
           if serializer.is_valid():
                 
-                patients=User.objects.get(id=serializer.data.get('patients'))
+                patients= None if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
                 
-                doctors=User.objects.get(employee=serializer.data.get('doctors'))
-                nurses=User.objects.get(employee=serializer.data.get('nurse'))
-                room=Room.objects.get(id=serializer.data.get('room'))
-                bed=Bed.objects.get(id=serializer.data.get('bed'))
+                doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+                nurse= None if serializer.data.get('nurse') is None else User.objects.get(employee=serializer.data.get('nurse'))
+                room= None if serializer.data.get('room') is None else Room.objects.get(id=serializer.data.get('room'))
+                bed= None if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
 
                     # createdBy=Nurse,
 
                     patients=patients,
                     doctors=doctors,
-                    nurse=nurses,
+                    nurse=nurse,
 
                     bed=bed,
                     room=room,
@@ -423,25 +437,37 @@ class UpdateCall(APIView):
         
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
-            patients=User.objects.get(id=serializer.data.get('patients'))
-            doctors=User.objects.get(employee=serializer.data.get('doctors'))
-            nurses=User.objects.get(employee=serializer.data.get('nurse'))
-            room=Room.objects.get(id=serializer.data.get('room'))
-            bed=Bed.objects.get(id=serializer.data.get('bed'))
+            patients= None if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
+            doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+            nurse= None if serializer.data.get('nurse') is None else User.objects.get(employee=serializer.data.get('nurse'))
+            room= None if serializer.data.get('room') is None else   Room.objects.get(id=serializer.data.get('room'))
+            bed= None if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
 
-            call.bed=bed
-            call.room=room
-            # call.createdBy=Nurse
-            call.patients=patients
-            call.doctors=doctors
-            call.nurses=nurses
 
-            call.type = serializer.data.get('type',  call.type)
-            call.status  = serializer.data.get('status', call.status)
-            call.disease= serializer.data.get('disease', call.disease)
-            call.treatment= serializer.data.get('treatment', call.treatment)
-            call.descrption= serializer.data.get('descrption', call.descrption)
-            call.date= serializer.data.get('date', call.date)
+            if  serializer.data.get('bed') is not None  : 
+                call.bed=bed
+            if  serializer.data.get('room') is not None  : 
+                call.room=room
+
+                # call.createdBy=Nurse
+            if  serializer.data.get('patients') is not None  :                
+                call.patients=patients
+            if  serializer.data.get('doctors') is not None  : 
+                call.doctors=doctors
+            if  serializer.data.get('nurse') is not None  : 
+                call.nurses=nurse
+            if  serializer.data.get('type') is not None  : 
+                call.type = serializer.data.get('type',  call.type)
+            if  serializer.data.get('status') is not None  : 
+                call.status  = serializer.data.get('status', call.status)
+            if  serializer.data.get('disease') is not None  : 
+                call.disease= serializer.data.get('disease', call.disease)
+            if  serializer.data.get('treatment') is not None  : 
+                call.treatment= serializer.data.get('treatment', call.treatment)
+            if  serializer.data.get('descrption') is not None  : 
+                call.descrption= serializer.data.get('descrption', call.descrption)
+            if  serializer.data.get('date') is not None  : 
+                call.date= serializer.data.get('date', call.date)
 
             call.save()
             return Response({"message": "Call data updated successfully", "data" : CallsSerializer(call).data})
