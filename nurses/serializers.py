@@ -86,8 +86,8 @@ class updateRoomSerializer(serializers.Serializer):
     reserved_until=serializers.DateTimeField(required=False,)
 
     def validate(self, data):
-        if 'room_status' not in data and 'number_in_room' not in data and 'incharge' not in data and 'bed_status' not in data and 'reserved_until' not in data and 'reserved_from' not in data and 'doctands' not in data and 'nurses' not in data and 'patients' not in data and 'disease' not in data and 'treatment' not in data and 'descrption' not in data:
-            raise serializers.ValidationError({"message": "At least one of 'number_in_room' or 'room_status' or 'incharge' or 'bed_status' or 'reserved_from' or 'reserved_until' or 'doctors' or 'nurses' or 'patients' or 'disease' or 'treatment' or 'descrption' must be provided"})
+        # if 'room_status' not in data and 'number_in_room' not in data and 'incharge' not in data and 'bed_status' not in data and 'reserved_until' not in data and 'reserved_from' not in data and 'doctands' not in data and 'nurses' not in data and 'patients' not in data and 'disease' not in data and 'treatment' not in data and 'descrption' not in data:
+        #     raise serializers.ValidationError({"message": "At least one of 'number_in_room' or 'room_status' or 'incharge' or 'bed_status' or 'reserved_from' or 'reserved_until' or 'doctors' or 'nurses' or 'patients' or 'disease' or 'treatment' or 'descrption' must be provided"})
         
         if 'room_status' in data and data['room_status'] not in ['Occupied', 'Full','Book','Empty']:
             raise serializers.ValidationError({"room_status": "Invalid status"})
