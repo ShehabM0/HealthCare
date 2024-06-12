@@ -239,10 +239,10 @@ class UpdateRoom(APIView):
         
         serializer = updateRoomSerializer(data=req.data)
         if serializer.is_valid():
-            patients = None if serializer.data.get('patients') is None else User.objects.filter(id=serializer.data.get('patients'))
-            incharge=None if serializer.data.get('incharge') is None else User.objects.get(employee=serializer.data.get('incharge'))
-            doctors=None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
-            nurses=None if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
+            patients = Bed.objects.get(id =bed_id).patients if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
+            incharge= Room.objects.get(id=bed.room.pk).incharge if serializer.data.get('incharge') is None else User.objects.get(employee=serializer.data.get('incharge'))
+            doctors= Bed.objects.get(id =bed_id).doctors if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+            nurses= Bed.objects.get(id =bed_id).nurses if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
 
 
             if  serializer.data.get('number_in_room') is not None  :           
@@ -312,12 +312,12 @@ class AddRoom(APIView):
                 doctors=doctors,
                 nurses=nurses,
                 
-                status  = serializer.data.get('bed_status', bed.status),
-                disease= serializer.data.get('disease', bed.disease),
-                treatment= serializer.data.get('treatment', bed.treatment),
-                descrption= serializer.data.get('descrption', bed.descrption),
-                reserved_from= serializer.data.get('reserved_from', bed.reserved_from),
-                reserved_until= serializer.data.get('reserved_until', bed.reserved_until),
+                status  = serializer.data.get('bed_status'),
+                disease= serializer.data.get('disease'),
+                treatment= serializer.data.get('treatment'),
+                descrption= serializer.data.get('descrption'),
+                reserved_from= serializer.data.get('reserved_from'),
+                reserved_until= serializer.data.get('reserved_until'),
             )
             Oldroom.save()
             NewBed.save()
@@ -437,11 +437,11 @@ class UpdateCall(APIView):
         
         serializer = CreateCallSerializer(data=req.data)
         if serializer.is_valid():
-            patients= None if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
-            doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
-            nurse= None if serializer.data.get('nurse') is None else User.objects.get(employee=serializer.data.get('nurse'))
-            room= None if serializer.data.get('room') is None else   Room.objects.get(id=serializer.data.get('room'))
-            bed= None if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
+            patients= Calls.objects.get(id =Call_id).patients if serializer.data.get('patients') is None else User.objects.get(id=serializer.data.get('patients'))
+            doctors= Calls.objects.get(id =Call_id).doctors if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
+            nurse= Calls.objects.get(id =Call_id).nurse if serializer.data.get('nurse') is None else User.objects.get(employee=serializer.data.get('nurse'))
+            room= Calls.objects.get(id =Call_id).room if serializer.data.get('room') is None else   Room.objects.get(id=serializer.data.get('room'))
+            bed= Calls.objects.get(id =Call_id).bed if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
 
 
             if  serializer.data.get('bed') is not None  : 
