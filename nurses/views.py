@@ -2,10 +2,11 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from patients.models import *
+from doctors.models import *
 from .serializers import *
 from .permissions import IsNurse
 from drf_yasg.utils import swagger_auto_schema
-
+from datetime import datetime
 
 class GetUserId(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -30,7 +31,8 @@ class GetPatientsClinic(APIView):
     def get(self, req):
           try:
               Nurse = req.user
-              PatientsReserv =   Reservation.objects.filter(clinic = Nurse.clinic, status='A')
+              working_hour = WorkingHour.objects.filter(clinic_id=Nurse.employee.clinic, day__gte=datetime.now()).first()              
+              PatientsReserv =   Reservation.objects.filter(clinic = Nurse.employee.clinic, working_hour=working_hour, status='A')
           except Reservation.DoesNotExist:
               return Response({"message": "clinic {Nurse.specialization}  and date sunday  is invalid!"}, status=status.HTTP_404_NOT_FOUND)
           serializer = ReservationsSerializer(PatientsReserv, many=True)
