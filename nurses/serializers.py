@@ -108,16 +108,16 @@ class updateRoomSerializer(serializers.Serializer):
             raise serializers.ValidationError({"descrption": "Invalid descrption be at least 100 characters."})           
 
 
-        if not Employee.objects.filter(id=data['incharge']).exists():
+        if 'incharge' in data and not Employee.objects.filter(id=data['incharge']).exists():
             raise ValidationError({"incharge": "doctor does not exist"})
       
-        if not User.objects.filter(id=data['patients']).exists():
+        if 'patients' in data and not User.objects.filter(id=data['patients']).exists():
             raise ValidationError({"patients": "patient does not exist"})
         
-        if not Employee.objects.filter(id=data['doctors']).exists():
+        if 'doctors' in data and not Employee.objects.filter(id=data['doctors']).exists():
             raise ValidationError({"doctors": "doctor does not exist"})
         
-        if not Employee.objects.filter(id=data['nurses']).exists():
+        if 'nurses' in data and not Employee.objects.filter(id=data['nurses']).exists():
             raise ValidationError({"nurses": "nurse does not exist"})
         return data
 
@@ -156,34 +156,34 @@ class CreateCallSerializer(serializers.Serializer):
 
     def validate(self,data):
         
-        if not Room.objects.filter(id=data['room']).exists():
+        if 'room' in data and  not Room.objects.filter(id=data['room']).exists():
             raise ValidationError({"room": "room does not exist"})
         
-        if not Bed.objects.filter(id=data['bed']).exists():
+        if 'bed' in data and not Bed.objects.filter(id=data['bed']).exists():
             raise ValidationError({"bed": "bed does not exist"})        
         
-        if not User.objects.filter(id=data['patients']).exists():
+        if 'patients' in data and not User.objects.filter(id=data['patients']).exists():
             raise ValidationError({"patients": "patient does not exist"})
         
-        if not Employee.objects.filter(id=data['doctors']).exists():
+        if 'doctors' in data and not Employee.objects.filter(id=data['doctors']).exists():
             raise ValidationError({"doctors": "doctor does not exist"})
         
-        if not Employee.objects.filter(id=data['nurse']).exists():
+        if 'nurse' in data and not Employee.objects.filter(id=data['nurse']).exists():
             raise ValidationError({"nurse": "nurse does not exist"})
         
 
-        if data['status'] not in ['Pending', 'Done']:
+        if 'status' in data and data['status'] not in ['Pending', 'Done']:
             raise ValidationError("Invalid status. Must be Pending, or Done.")
         
-        if data['type'] not in ['Surgery', 'inPatient Treatment']:
+        if  'type' in data and data['type'] not in ['Surgery', 'inPatient Treatment']:
             raise ValidationError("Invalid type. Must be Surgery, or inPatient Treatment.")
         
-        if len(data['disease']) > 30:
+        if 'disease' in data and len(data['disease']) > 30:
             raise ValidationError({"disease": "disease name must be at least 30 characters."})
         
-        if len(data['treatment']) >30:
+        if 'treatment' in data and len(data['treatment']) >30:
             raise ValidationError({"treatment": "treatment name must be at least 30 characters."})
        
-        if len(data['descrption']) > 100:
+        if 'descrption' in data and len(data['descrption']) > 100:
             raise ValidationError({"descrption": "descrption must be at least 100 characters."})                
         return data
