@@ -187,8 +187,8 @@ class AddRoom(APIView):
             doctors= None if serializer.data.get('doctors') is None else User.objects.get(employee=serializer.data.get('doctors'))
             nurses= None if serializer.data.get('nurses') is None else User.objects.get(employee=serializer.data.get('nurses'))
   
-            Oldroom.number_in_room = serializer.data.get('number_in_room',  Oldroom.number_in_room)
-            Oldroom.status = serializer.data.get('room_status',  Oldroom.status)
+            Oldroom.number_in_room = serializer.data.get('number_in_room')
+            Oldroom.status = serializer.data.get('room_status')
             Oldroom.incharge=incharge
 
             NewBed=Bed(
@@ -201,12 +201,12 @@ class AddRoom(APIView):
                 doctors=doctors,
                 nurses=nurses,
                 
-                status  = serializer.data.get('bed_status', bed.status),
-                disease= serializer.data.get('disease', bed.disease),
-                treatment= serializer.data.get('treatment', bed.treatment),
-                descrption= serializer.data.get('descrption', bed.descrption),
-                reserved_from= serializer.data.get('reserved_from', bed.reserved_from),
-                reserved_until= serializer.data.get('reserved_until', bed.reserved_until),
+                status  = serializer.data.get('bed_status'),
+                disease= serializer.data.get('disease'),
+                treatment= serializer.data.get('treatment'),
+                descrption= serializer.data.get('descrption'),
+                reserved_from= serializer.data.get('reserved_from'),
+                reserved_until= serializer.data.get('reserved_until'),
             )
             Oldroom.save()
             NewBed.save()
