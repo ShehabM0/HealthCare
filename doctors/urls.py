@@ -8,6 +8,8 @@ urlpatterns = [
     path('clinics/', ListAllClinics.as_view()),
     # path('clinic/<int:pk>/', ClinicView.as_view()),
     # path('clinic/', AddClinicView.as_view()),
+
+    path('reserve-clinic/', ReserveClinicView.as_view()),
     path('working-hours/<int:clinic_id>', GetClinicWorkingHours.as_view()),
     # path('working-hour/', AddWorkingHourView.as_view()),
     # path('working-hour/<int:pk>/', WorkingHoursView.as_view()),

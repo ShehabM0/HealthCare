@@ -88,7 +88,7 @@ class DoctorCasesView(APIView):
     def get(self, request):
         user = request.user
         working_hour = WorkingHour.objects.filter(clinic_id=user.employee.clinic, day__gte=datetime.now()).first()
-        cases = Reservation.objects.filter(clinic = user.employee.clinic, working_hour=working_hour)
+        cases = Reservation.objects.filter(clinic = user.employee.clinic, working_hour=working_hour, status='A')
         serializer = CaseSerializer(cases, many=True)
         return Response({"data": serializer.data , "count": cases.count()})
     
@@ -120,6 +120,50 @@ class PatientMedicalRecordView(APIView):
     
 
 
+
+class ReserveClinicView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(request_body=PreserveClinicSerializer)
+    def post(self, request):
+        serializer = PreserveClinicSerializer(data=request.data)
+        if serializer.is_valid():
+            
+            number_in_qeue = Reservation.objects.filter(clinic = serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id']).count() + 1
+            if Reservation.objects.filter(clinic=serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id'], patient=request.user.pk).exists():
+                raise ValidationError({"clinic_id": "This clinic is already reserved"})
+            clinic = Clinic.objects.get(id = serializer.data['clinic_id'])
+            user=User.objects.get(id=serializer.data.get('patient'))
+            reservation = Reservation(
+                type=serializer.data.get('type'),
+                patient=user,
+                clinic=clinic,
+                working_hour = WorkingHour.objects.get(id = serializer.data['working_hour_id']),
+                number_in_qeue = number_in_qeue,
+                price = clinic.price
+            )
+            reservation.save()
+            return Response({"message": "Clinic preserved successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 ################################## Room 
 
@@ -141,7 +185,7 @@ class GetCurrentRoom(APIView):
     def get(self, req,room_id):
           try:
               room =   Room.objects.filter(id =room_id )
-              bed =   Bed.objects.filter(room =room_id ,status='Empty')
+              bed =   Bed.objects.filter(room =room_id ,status='Empty')| Bed.objects.filter(room =room_id ,status='Occupied')
           except room.DoesNotExist:
               return Response({"message": "room {room_id} dosen't exist"}, status=status.HTTP_404_NOT_FOUND)
           except bed.DoesNotExist:

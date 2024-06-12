@@ -70,6 +70,26 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         exclude = ['patient']
 
 
+
+
+
+
+class PreserveClinicSerializer(serializers.Serializer):
+    clinic_id = serializers.IntegerField()
+    working_hour_id = serializers.IntegerField()
+    patient=serializers.IntegerField( required=False)
+    type=serializers.CharField(max_length=2, required=False)
+    def validate(self,data):
+        if data['type'] not in ['S', 'C', 'V','E']:
+            raise ValidationError("Invalid status. Must be (S)urgery, or (C)onsultation or (V)isit or (E)xamination .")        
+        if not User.objects.filter(id=data['patient']).exists():
+            raise ValidationError({"patient": "patient does not exist"})       
+        if not Clinic.objects.filter(id=data['clinic_id']).exists():
+            raise ValidationError({"clinic_id": "Clinic does not exist"})
+        if not WorkingHour.objects.filter(id=data['working_hour_id']).exists():
+            raise ValidationError({"working_hour_id": "Working hour does not exist"})
+        return data
+
    ############################# Room
 
 class RoomSerializer(serializers.ModelSerializer):
