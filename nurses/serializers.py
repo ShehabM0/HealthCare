@@ -93,7 +93,7 @@ class updateRoomSerializer(serializers.Serializer):
             raise serializers.ValidationError({"room_status": "Invalid status"})
         
         if 'bed_status' in data and data['bed_status'] not in ['Occupied', 'CheckOut','Booked','Empty']:
-            raise serializers.ValidationError({"room_status": "Invalid status"})
+            raise serializers.ValidationError({"bed_status": "Invalid status"})
         
         if 'number_in_room' in data and data['number_in_room'] is not None and data['number_in_room'] > 3:
             raise serializers.ValidationError({"number_in_room": "Invalid number_in_room max number id{max}"})
