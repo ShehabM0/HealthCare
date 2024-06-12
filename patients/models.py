@@ -46,6 +46,8 @@ class Reservation(models.Model):
         ('P', 'Pending'),
         ('A', 'Accepted'),
         ('D', 'Done'),
+        ('N', 'Not Present'),
+        ('C', 'Cansel'),
     ]
     TYPES = [
         (   'S' , 'Surgery'),
