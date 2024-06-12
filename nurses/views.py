@@ -278,7 +278,6 @@ class CreateCalls(APIView):
     permission_classes = [permissions.IsAuthenticated,IsNurse]
 
     def post(self, req):
-        #   Nurse = req.user
           serializer = CreateCallSerializer(data=req.data)
           
           if serializer.is_valid():
@@ -291,7 +290,6 @@ class CreateCalls(APIView):
                 bed= None if serializer.data.get('bed') is None else Bed.objects.get(id=serializer.data.get('bed'))
                 call=Calls(
 
-                    # createdBy=Nurse,
 
                     patients=patients,
                     doctors=doctors,
@@ -318,7 +316,6 @@ class UpdateCall(APIView):
 
     def patch(self, req, Call_id):
         try:    
-            # Nurse = req.user
               call =   Calls.objects.get(id =Call_id )
 
         except call.DoesNotExist:
@@ -338,7 +335,6 @@ class UpdateCall(APIView):
             if  serializer.data.get('room') is not None  : 
                 call.room=room
 
-                # call.createdBy=Nurse
             if  serializer.data.get('patients') is not None  :                
                 call.patients=patients
             if  serializer.data.get('doctors') is not None  : 
