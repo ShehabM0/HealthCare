@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.core.paginator import Paginator
 from rest_framework import status
 from patients.models import User
+from common.permissions import *
 from .serializers import *
 
 from payment.views import AddPurchase
@@ -46,6 +47,10 @@ def ListMedications(req):
     return Response({"data": serializer.data, "count": len(serializer.data)})
 
 def AddMedication(req):
+    user = req.user
+    if not user.employee or user.employee.type != 'P':
+        return Response({"message": "User is not a Pharmacist."}, status=status.HTTP_401_UNAUTHORIZED)
+
     serializer = AddMedicationSerializer(data=req.data)
     if not serializer.is_valid():
         return Response({"message": "Medication not added!", "errros": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -70,7 +75,7 @@ def ListRelatedMedications(req, medication_id):
 
 @swagger_auto_schema(method='POST', request_body=PrescriptionSerializer)
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsDoctor])
 def CreatePrescription(req, patient_id):
     doctor_id = req.user.id
     try:
@@ -133,7 +138,7 @@ def ListPrescriptionItems(req, prescription_id):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsDoctor])
 def RemoveFromPrescription(req, prescription_id, prescription_item_id):
     try:
         prescription_item = PrescriptionItem.objects.get(id=prescription_item_id, prescription=prescription_id).delete()
@@ -144,7 +149,7 @@ def RemoveFromPrescription(req, prescription_id, prescription_item_id):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsDoctor])
 def ClearPrescription(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -185,9 +190,9 @@ def AddPrescriptionPurchase(req, prescription_id):
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def ListPatientPrescriptions(req, patient_id):
+def ListPatientPrescriptions(req, patient_username):
     try:
-        patient = User.objects.get(id=patient_id)
+        patient = User.objects.get(username=patient_username)
     except User.DoesNotExist:
         return Response({"message": "Patient not found!"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -196,11 +201,10 @@ def ListPatientPrescriptions(req, patient_id):
     return Response({"data": serializer.data})
 
 
-############################ pharmacist ############################
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPharmacist])
 def VerifyPrescriptionPurchase(req, prescription_id):
     try:
         prescription = Prescription.objects.get(id=prescription_id)
@@ -223,7 +227,7 @@ def VerifyPrescriptionPurchase(req, prescription_id):
 
 @swagger_auto_schema(methods=['GET', 'DELETE'])
 @api_view(['GET', 'DELETE'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPharmacist])
 def MedicationCategories(req, medication_id, category_id):
     if req.method == 'GET':
         return AddMedicationCategory(req, medication_id, category_id)
@@ -292,6 +296,10 @@ def GetMedication(req, medication_id):
     return Response({"data": serializer.data})
 
 def UpdateMedication(req, medication_id):
+    user = req.user
+    if not user.employee or user.employee.type != 'P':
+        return Response({"message": "User is not a Pharmacist."}, status=status.HTTP_401_UNAUTHORIZED)
+
     try:
         medicaiton = Medication.objects.get(id=medication_id)
     except Medication.DoesNotExist:
@@ -307,7 +315,7 @@ def UpdateMedication(req, medication_id):
 @swagger_auto_schema(method='GET')
 @swagger_auto_schema(method='POST', request_body=AddMedicationCategorySerilaizer)
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsPharmacist])
 def Categories(req):
     if req.method == 'GET':
         return ListCategories(req)

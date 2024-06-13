@@ -1,15 +1,18 @@
+from rest_framework.decorators import api_view, permission_classes
 from common.utils import GenerateRandomPass, SendEmail
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from datetime import datetime, timedelta
 from .models import VerificationCode
 from rest_framework import status
+from common.permissions import *
 from .serializers import *
 import os
 
 @swagger_auto_schema(method='POST', request_body=CreateCodeSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def CreateVerificationCode(req):
     code = GenerateRandomPass('', int(os.environ.get('VERIFICATION_CODE_LEN')))
     uri = req.build_absolute_uri()
@@ -52,6 +55,7 @@ def CreateVerificationCode(req):
 
 @swagger_auto_schema(method='POST', request_body=ValidateCodeSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def VerifyCode(req):
     serializer = ValidateCodeSerializer(data=req.data)
     if not serializer.is_valid():

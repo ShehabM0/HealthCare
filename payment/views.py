@@ -1,22 +1,18 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta
 from .models import CreditCard, UserCard
 from rest_framework import status
+from common.permissions import *
 from .serilaizer import *
 
 @swagger_auto_schema(method='POST', request_body=CreateCardSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
 def CreateCard(req):
-    user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
-    if not user.is_superuser:
-        return Response({"message": "User not authorized!"}, status=status.HTTP_403_FORBIDDEN)
-
-    
     serializer = CreateCardSerializer(data=req.data)
     if not serializer.is_valid():
         return Response({"message": "Invalid data!", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -37,10 +33,9 @@ def CreateCard(req):
 
 @swagger_auto_schema(method='POST', request_body=AssignCardSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def AssignCard(req):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     serializer = AssignCardSerializer(data=req.data)
     if not serializer.is_valid():
@@ -81,10 +76,9 @@ def AssignCard(req):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def NeglectCards(req):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     cards = UserCard.objects.filter(user=user)
     for card in cards:
@@ -94,10 +88,9 @@ def NeglectCards(req):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def NeglectCard(req, pk=None):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     try:
         user_card = UserCard.objects.get(card=pk)
@@ -109,10 +102,9 @@ def NeglectCard(req, pk=None):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListCards(req):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     cards = UserCard.objects.filter(user=user)
     cards = UserCardSerializer(cards, many=True)
@@ -121,13 +113,12 @@ def ListCards(req):
 
 @swagger_auto_schema(method='POST', request_body=AddPurchaseSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def AddPurchase(req):
     if not req.path: # calling it inside a view
         req = req._request
 
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     cards = UserCard.objects.filter(user=user)
     if not cards.exists():
@@ -178,6 +169,7 @@ def AddPurchase(req):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListPurchases(req):
     user = req.user
 

@@ -2,6 +2,15 @@ from django.db import models
 from doctors.models import Clinic
 
 class Employee(models.Model):
+    USER_TYPES_DICT = {
+        'D': 'Doctor',
+        'N': 'Nurse',
+        'H': 'Human Resources',
+        'P': 'Pharmacist',
+        'HD': 'Head Doctor',
+        'HN': 'Head Nurse'
+    }
+
     USER_TYPES = [
         ('A', 'Admin'),
 
@@ -64,11 +73,5 @@ class Employee(models.Model):
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        type_full_str = None
-        if self.type == 'D': type_full_str = "Doctor"
-        elif self.type == 'N': type_full_str = "Nurse"
-        elif self.type == 'P': type_full_str = "Pharmacist"
-        elif self.type == 'H': type_full_str = "Human Resource"
-        elif self.type == 'HD': type_full_str = "Head Doctor"
-        elif self.type == 'HN': type_full_str = "Head Nures"
+        type_full_str = self.USER_TYPES_DICT[self.type]
         return f"{type_full_str} - {self.specialization}"

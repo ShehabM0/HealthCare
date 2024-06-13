@@ -1,6 +1,8 @@
+from rest_framework.decorators import api_view, permission_classes
+from verification_code.serializers import GetCodeSerializer
+from rest_framework.permissions import IsAuthenticated
 from verification_code.models import VerificationCode
 from django.utils.crypto import get_random_string
-from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
@@ -9,13 +11,13 @@ from datetime import datetime, timedelta
 from common.utils import SendEmail
 from rest_framework import status
 from patients.models import User
-from verification_code.serializers import GetCodeSerializer
+from common.permissions import *
 from .serializers import *
 import os
 
-# Create your views here.
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def ListUsers(req, type=None):
     if type: users = User.objects.filter(type=type[0].upper())
     else: users = User.objects.all()
@@ -36,6 +38,7 @@ def ListUsers(req, type=None):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetUser(req, pk):
     try:
         data = User.objects.get(id=pk)
@@ -46,20 +49,18 @@ def GetUser(req, pk):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def GetCurrentUser(req):
     user = req.user
-    if user.is_authenticated:
-        serializer = UserSerializer(user)
-        return Response({"message": "Success", "data": serializer.data})
-    return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
+    serializer = UserSerializer(user)
+    return Response({"message": "Success", "data": serializer.data})
 
-@swagger_auto_schema(method='PATCH')
+@swagger_auto_schema(method='PATCH', request_body=UpdateUserSerializer)
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def UpdateUser(req, pk=None):
     if not pk:
         user = req.user
-        if not user.is_authenticated:
-            return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
     else:
         try:
             user = User.objects.get(id=pk)
@@ -76,10 +77,9 @@ def UpdateUser(req, pk=None):
 
 @swagger_auto_schema(method='PATCH', request_body=UpdateEmailSerializer)
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def UpdateEmail(req):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
     
     serializer = UserSerializer(user)
     user_id = serializer.data['id']
@@ -93,6 +93,7 @@ def UpdateEmail(req):
 
 @swagger_auto_schema(method='PATCH', request_body=UpdatePasswordSerializer)
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def UpdatePassword(req):
     user = req.user
     old_password = req.data['old_password']
@@ -112,10 +113,9 @@ def UpdatePassword(req):
 
 @swagger_auto_schema(method='POST', request_body=VerifyEmailSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def ForgotPassword(req):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
     
     serializer = UserSerializer(user)
     user_id = serializer.data['id']
@@ -160,10 +160,9 @@ def ForgotPassword(req):
 
 @swagger_auto_schema(method='POST', request_body=ResetPasswordSerializer)
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def ResetPassword(req, token):
     user = req.user
-    if not user.is_authenticated:
-        return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
 
     user=User.objects.get(username=user)
     serializer=UserSerializer(user)
@@ -194,11 +193,10 @@ def ResetPassword(req, token):
 
 @swagger_auto_schema(method='DELETE')
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def DeleteUser(req, pk=None):
     if not pk:
         user = req.user
-        if not user.is_authenticated:
-            return Response({"message": "User not authenticated!"}, status=status.HTTP_401_UNAUTHORIZED)
     else:
         try:
             user = User.objects.get(id=pk)
