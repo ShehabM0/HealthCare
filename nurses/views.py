@@ -84,8 +84,8 @@ class GetAllRooms(APIView):
 
     def get(self, req):
         
-        room = Room.objects.all()
-        serializer = RoomSerializer(room, many=True)
+        bed = Bed.objects.all()
+        serializer = BedSerializer(bed, many=True)
         return Response({"data": serializer.data, "count": len(serializer.data)}) 
 
 
