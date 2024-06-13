@@ -3,13 +3,17 @@ from doctors.models import Clinic
 
 class Employee(models.Model):
     USER_TYPES = [
-        ('D', 'Doctor'),
-        ('HD', 'Head Doctor'),    
         ('A', 'Admin'),
+
+        ('D', 'Doctor'),
         ('N', 'Nurse'),
+        ('H', 'Human Resources'),
+        ('P', 'Pharmacist'),
+
+        ('HD', 'Head Doctor'),    
         ('HN', 'Head Nurse'),
-        ('H', 'Human Resources')
     ]
+
     SPECIALIZAION_TYPES = [
         ('AnatomicalPathology', 'AnatomicalPathology'),
         ('Anesthesiology', 'Anesthesiology'),
@@ -59,10 +63,12 @@ class Employee(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, null=True, blank=True)
 
-
     def __str__(self):
         type_full_str = None
         if self.type == 'D': type_full_str = "Doctor"
         elif self.type == 'N': type_full_str = "Nurse"
+        elif self.type == 'P': type_full_str = "Pharmacist"
         elif self.type == 'H': type_full_str = "Human Resource"
+        elif self.type == 'HD': type_full_str = "Head Doctor"
+        elif self.type == 'HN': type_full_str = "Head Nures"
         return f"{type_full_str} - {self.specialization}"

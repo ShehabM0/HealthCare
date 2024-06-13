@@ -1,25 +1,47 @@
+from rest_framework.decorators import api_view, permission_classes
 from common.utils import GenerateRandomPass, SendEmail
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status, permissions
 from rest_framework.response import Response
 from django.db import IntegrityError
+from rest_framework import status
 from patients.models import User
+from common.permissions import *
 from datetime import datetime
 from .models import Employee
 from .serializers import *
 import os
 
+USER_TYPES = {
+    'D': 'DOC_PASS_STR',
+    'N': 'NURSE_PASS_STR',
+    'H': 'HR_PASS_STR',
+    'P': 'PH_PASS_STR',
+    'HD': 'HD_PASS_STR',
+    'HN': 'HN_PASS_STR'
+}
+
 @swagger_auto_schema(method='POST', request_body=CreateUserSerializer)
-@api_view(['POST'])
+@swagger_auto_schema(method='PATCH', request_body=UpdateEmployeeSerializer)
+@api_view(['POST', 'PATCH'])
+@permission_classes([IsAuthenticated, IsHR])
+def EmployeeView(req):
+    if req.method == 'POST':
+        return CreateEmployeeView(req)
+    elif req.method == 'PATCH':
+        return UpdateEmployeeView(req)
+
 def CreateEmployeeView(req):
     data = req.data
     user_type = data['type'].upper()
 
-    if user_type == 'D': user_type_str = os.environ.get('DOC_PASS_STR')
-    elif user_type == 'N': user_type_str = os.environ.get('NURSE_PASS_STR')
-    elif user_type == 'H': user_type_str = os.environ.get('HR_PASS_STR')
-    else: return Response({"message": "Invalid user type!", "errors": "User type must be (D)octor, (N)urse or (H)uman resources."}, status=status.HTTP_400_BAD_REQUEST)
+    if user_type not in USER_TYPES.keys():
+        return Response({
+            "message": "Invalid user type!",
+            "errors": "User type must be (D)octor, (N)urse, (H)uman resources, (P)harmacist, (H)ead (D)octor or (H)ead (N)urse."
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    user_type_str = os.environ.get(USER_TYPES[user_type])
 
     user_pass = GenerateRandomPass(user_type_str, int(os.environ.get('RANDOM_PASS_LEN')))
     
@@ -71,9 +93,20 @@ def CreateEmployeeView(req):
     )
     return Response({"message": "Employee created successfully, check your email."}, status=status.HTTP_201_CREATED)
 
+def UpdateEmployeeView(req):
+    employee = req.user
+
+    updated_employee = UpdateEmployeeSerializer(employee, data=req.data, partial=True)
+    if not updated_employee.is_valid():
+        return Response({"message": "Error updating Employee!", "data": updated_employee.errors})
+    
+    updated_employee.save()
+    return Response({"message": "Success, Employee updated", "data": updated_employee.data})
+    
 @swagger_auto_schema(method='PATCH', request_body=UpdateEmployeeSerializer)
 @api_view(['PATCH'])
-def UpdateEmployeeView(req, pk=None):
+@permission_classes([IsAuthenticated, IsHR])
+def UpdateEmployeeByIDView(req, pk):
     try:
         user = User.objects.get(id=pk)
     except User.DoesNotExist:
@@ -89,4 +122,3 @@ def UpdateEmployeeView(req, pk=None):
     
     updated_employee.save()
     return Response({"message": "Success, Employee updated", "data": updated_employee.data})
-    

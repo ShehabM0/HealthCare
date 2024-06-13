@@ -4,7 +4,8 @@ from . import views
 app_name = 'hr'
 
 urlpatterns = [
-    path('create-employee/', views.CreateEmployeeView, name = 'create-employee'),
-    path('update-employee/<int:pk>/', views.UpdateEmployeeView, name = 'update-employee'),
+    path('employee/', views.EmployeeView, name = 'create-employee'),
+    path('employee/', views.EmployeeView, name = 'update-employee'),
+    path('employee/<int:pk>/', views.UpdateEmployeeByIDView, name = 'update-employee-by-id'),
 ]
 

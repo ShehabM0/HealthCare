@@ -3,6 +3,15 @@ from rest_framework import serializers
 from patients.models import User
 from .models import Employee
 
+USER_TYPES = {
+    'D': 'Doctor',
+    'N': 'Nurse',
+    'H': 'Human Resources',
+    'P': 'Pharmacist',
+    'HD': 'Head Doctor',
+    'HN': 'Head Nurse'
+}
+
 class CreateUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=30)
     last_name = serializers.CharField(max_length=30)
@@ -58,8 +67,8 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
             raise ValidationError({"salary": "Salary must be a postive digit!"})
         return salary
     def validate_type(self, type):
-        if type not in ['D', 'H', 'N']:
-            raise ValidationError({"type": "Employee type must be (D)octor, (N)urse or (H)uman resources."})
+        if type not in USER_TYPES.keys():
+            raise ValidationError({"type": "Employee type must be (D)octor, (N)urse, (H)uman resources, (P)harmacist, (H)ead (D)octor or (H)ead (N)urse."})
         return type
     def validate_specialization(self, specialization):
         if (specialization, specialization) not in Employee.SPECIALIZAION_TYPES:
@@ -74,9 +83,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_type(self, obj):
-        type_full_str = None
-        if obj.type == 'D': type_full_str = "Doctor"
-        elif obj.type == 'N': type_full_str = "Nurse"
-        elif obj.type == 'H': type_full_str = "Human Resource"
+        type_full_str = USER_TYPES[obj.type]
         return type_full_str
         
