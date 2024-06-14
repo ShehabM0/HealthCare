@@ -71,6 +71,7 @@ class BedSerializer(serializers.ModelSerializer):
     patients = UserSerializer()
     doctors = UserSerializer()
     nurses = UserSerializer()
+    incharge= UserSerializer()
     class Meta:
         model = Bed
         fields ='__all__'
