@@ -237,3 +237,16 @@ class CreateCallSerializer(serializers.Serializer):
         if 'descrption' in data and len(data['descrption']) > 100:
             raise ValidationError({"descrption": "descrption must be at least 100 characters."})                
         return data
+
+
+
+class UploadFileSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    file_name = serializers.CharField(max_length=100, required=False)
+    type = serializers.CharField(max_length=1, required=False)
+
+    def validate(self, data):
+        type = data.get('type')
+        if type not in ['P', 'R', 'I', 'A']:
+            raise ValidationError("Invalid type. Must be (P)rescription, or (R)eport, or (I)mage, or (A)nalysis.")
+        return data

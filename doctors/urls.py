@@ -32,5 +32,5 @@ urlpatterns = [
     path('Calls/Create/', CreateCalls.as_view(), name='CreateCalls'),
     path('Calls/Update/<int:Call_id>', UpdateCall.as_view(), name='UpdateCall'),
     path('Call/History/',GetCallsHistory.as_view(), name='UserDetails'),
-
+    path('upload/<int:patient_id>', UploadPatientFile.as_view()),
 ]

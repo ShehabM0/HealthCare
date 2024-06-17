@@ -489,3 +489,22 @@ class UpdateCall(APIView):
         return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
 
 
+
+
+class UploadPatientFile(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+    def post(self, request, patient_id):
+        user = User.objects.filter(id=patient_id).first()
+        serializer = UploadFileSerializer(data=request.data)
+        if serializer.is_valid():
+            file = serializer.validated_data.get('file')
+            file_name = serializer.validated_data.get('file_name', file.name)
+            file.name = f"{user.first_name}_{user.last_name}_{file_name}"
+            medical_record = MedicalRecord(
+                patient=user,
+                file=file,
+                type=serializer.validated_data.get('type'),
+            )
+            medical_record.save()
+            return Response({"message": "File uploaded successfully"}, status=200)
+        return Response({"message": "Invalid data", "errors": serializer.errors}, status=400)
