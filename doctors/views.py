@@ -493,6 +493,7 @@ class UpdateCall(APIView):
 
 class UploadPatientFile(APIView):
     permission_classes = [permissions.IsAuthenticated, IsDoctor]
+    @swagger_auto_schema(request_body=UploadFileSerializer)
     def post(self, request, patient_id):
         user = User.objects.filter(id=patient_id).first()
         serializer = UploadFileSerializer(data=request.data)
