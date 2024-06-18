@@ -43,7 +43,7 @@ class ListWorkingHoursView(generics.ListAPIView):
 
     # if clinic doesn't have a doctor will throw error 500
 class ListAllClinics(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+    permission_classes = [permissions.IsAuthenticated]
     def get(self, request):
         clinics = Clinic.objects.all()
         response = []
