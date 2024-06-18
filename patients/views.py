@@ -73,7 +73,7 @@ class ReserveClinicView(APIView):
                 price = clinic.price
             )
             reservation.save()
-            return Response({"message": "Clinic preserved successfully"}, status=status.HTTP_200_OK)
+            return Response({"message": "Clinic preserved successfully", "data" : ReservationsSerializer(reservation).data}, status=status.HTTP_201_CREATED)
         else:
             return Response({"message": "Invalid data", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
