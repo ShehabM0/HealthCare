@@ -1,5 +1,5 @@
 # HealthCare 🏥
-HealthCare is a Hospital Management System a comprehensive software solution designed to streamline the administrative, financial, and clinical operations of a hospital. It integrates various functionalities such as patient registration, appointment scheduling, billing, medical records management, and more, to enhance the efficiency and effectiveness of healthcare delivery.
+HealthCare is a Hospital Management System, which offers a comprehensive software solution designed to streamline the administrative, financial, and clinical operations of a hospital. It integrates various functionalities such as patient registration, appointment scheduling, billing, medical records management, and more, to enhance the efficiency and effectiveness of healthcare delivery.
 
 ## Technologies Used ⚙️
 - **Backend:**
@@ -21,9 +21,9 @@ HealthCare is a Hospital Management System a comprehensive software solution des
     - Docker - Platform for developing, shipping, and running applications in containers
 - **Deployment:**
     - Render - Cloud platform for deploying and hosting web applications
-    - Railway - Cloud platform for building, shipping, and monitoring applications. No Platform Engineer required
+    - Railway - Cloud platform for building, shipping, and monitoring applications
 
-## System entites 🥼
+## System Entities 🥼
 - Patient
 - Doctor
 - Head Doctor
@@ -32,3 +32,10 @@ HealthCare is a Hospital Management System a comprehensive software solution des
 - Pharmacist
 - Human resources
 
+## ER Diagram 🗃️
+Here is HealthCare Entity-Relationship diagram
+<div align="center">
+  <a href="https://drive.google.com/file/d/12yLHMj6asLafd-rBsgR-EDg-U5gkEgK5/view?usp=sharing" target="_blank">
+      <img src="https://drive.google.com/uc?id=1HgFwzFlk39phcAD4p8jIEX8leaVgL7-D"/>
+  </a>
+</div>
