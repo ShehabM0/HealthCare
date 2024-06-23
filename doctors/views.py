@@ -365,8 +365,8 @@ class GetCalls(APIView):
 
     def get(self, req,Call_id):
           try:
-              Nurse = req.user
-              Call =   Calls.objects.filter(nurse = Nurse,id=Call_id)
+              doctor = req.user
+              Call =   Calls.objects.filter(doctors = doctor,id=Call_id)
           except Call.DoesNotExist:
               return Response({"message": "there is no Calls right now"}, status=status.HTTP_404_NOT_FOUND)
           serializer = CallsSerializer(Call, many=True)
@@ -391,8 +391,8 @@ class GetCallsHistory(APIView):
 
     def get(self, req):
           try:
-              Nurse = req.user
-              Call =   Calls.objects.filter(nurse = Nurse, status='Done' )
+              doctor = req.user
+              Call =   Calls.objects.filter(doctors = doctor, status='Done' )
           except Call.DoesNotExist:
               return Response({"message": "there is no Calls right now"}, status=status.HTTP_404_NOT_FOUND)
           serializer = CallsSerializer(Call, many=True)
