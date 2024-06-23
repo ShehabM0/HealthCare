@@ -129,8 +129,8 @@ class ReserveClinicView(APIView):
         serializer = PreserveClinicSerializer2(data=request.data)
         if serializer.is_valid():
             
-            number_in_qeue = Reservation.objects.filter(clinic = serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id']).count() + 1
-            if Reservation.objects.filter(clinic=serializer.data['clinic_id'], working_hour=serializer.data['working_hour_id'], patient=request.user.pk).exists():
+            number_in_qeue = Reservation.objects.filter(clinic =request.user.clinic, working_hour=serializer.data['working_hour_id']).count() + 1
+            if Reservation.objects.filter(clinic=request.user.clinic, working_hour=serializer.data['working_hour_id'], patient=request.user.pk).exists():
                 raise ValidationError({"clinic_id": "This clinic is already reserved"})
             clinic = Clinic.objects.get(clinic =request.user.clinic )
             user=User.objects.get(id=serializer.data.get('patient'))
