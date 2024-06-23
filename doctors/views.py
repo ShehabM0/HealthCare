@@ -378,8 +378,8 @@ class GetCurrentCalls(APIView):
 
     def get(self, req):
           try:
-              Nurse = req.user
-              Call =   Calls.objects.filter(nurse = Nurse, status='Pending' )
+              doctor = req.user
+              Call =   Calls.objects.filter(doctors = doctor, status='Pending' )
           except Call.DoesNotExist:
               return Response({"message": "there is no Calls right now"}, status=status.HTTP_404_NOT_FOUND)
           serializer = CallsSerializer(Call, many=True)
