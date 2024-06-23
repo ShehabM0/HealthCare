@@ -62,14 +62,14 @@ class Calls(models.Model):
     ]
     type = models.CharField(max_length=20, choices=TYPES)
     room =models.ForeignKey(Room, on_delete=models.CASCADE, related_name='Rooms_call')
-    disease = models.CharField( max_length=30,null=True,blank=True)
-    treatment = models.CharField( max_length=30,null=True,blank=True)
+    disease = models.CharField(max_length=30,null=True,blank=True)#
+    treatment = models.CharField( max_length=30,null=True,blank=True)#
     status = models.CharField(max_length=7, choices=statuses, default='Pending')
     descrption = models.CharField( max_length=100,null=True,blank=True)
     patients = models.ForeignKey(User,  on_delete=models.CASCADE,related_name='patients_call')
     doctors = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='doctors_call')
     nurse = models.ForeignKey(User, on_delete=models.CASCADE,  related_name='nurses_call')
-    date = models.CharField(max_length=30, default=f'{timezone.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    date = models.DateTimeField(auto_now_add=True)
     bed=models.ForeignKey(Bed, on_delete=models.CASCADE, related_name='Beds_call')
 
 

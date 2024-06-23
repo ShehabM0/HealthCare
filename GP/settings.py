@@ -163,8 +163,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-if DEPLOYED == 'True':
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('POSTGRES_URL'))
+# if DEPLOYED == 'True':
+DATABASES['default'] = dj_database_url.parse(os.environ.get('POSTGRES_URL'))
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
