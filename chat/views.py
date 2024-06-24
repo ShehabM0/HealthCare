@@ -50,9 +50,8 @@ def CreateRoomView(req):
 
 @swagger_auto_schema(method='GET')
 @api_view(['GET'])
-def ListRoomMessagesView(req):
-    room_name = req.data.get('room_name', None)
-
+def ListRoomMessagesView(req, room_name):
+    print(room_name)
     try:
         room = ChatRoom.objects.get(room_name = room_name)
         messages = ChatMessage.objects.filter(room = room)
