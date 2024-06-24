@@ -59,7 +59,7 @@ class ListAllClinics(APIView):
         return Response(response)
     
 class GetClinicWorkingHours(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+    permission_classes = [permissions.IsAuthenticated]
     def get(self,request, clinic_id):
         working_hours = WorkingHour.objects.filter(clinic_id=clinic_id, day__gte=datetime.now())
         serializer = WorkingHourSerializer(working_hours, many=True)
