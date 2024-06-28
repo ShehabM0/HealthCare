@@ -35,7 +35,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=100)
-    clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True)
+    clinic = models.ForeignKey('doctors.Clinic', on_delete=models.CASCADE, null=True, blank=True, related_name='clinic')
     ssn = models.CharField(max_length=14, unique=True, null=True)
     insurance_number = models.CharField(max_length=9, unique=True, null=True)
     blood = models.CharField(max_length=3, choices=BLOOD_TYPES, default='O+', null=True)
@@ -56,8 +56,8 @@ class Reservation(models.Model):
         (   'E' , 'Examination'),
     ]
     patient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient')
-    clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True)
-    working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True)
+    clinic = models.ForeignKey('doctors.Clinic', on_delete = models.CASCADE, null=True, blank=True, related_name='clinics')
+    working_hour = models.ForeignKey('doctors.WorkingHour', on_delete = models.CASCADE , null=True, blank=True, related_name='working_hour')
     number_in_qeue = models.IntegerField(default=1)
     status = models.CharField(max_length=1, choices=statuses, default='P')
     price = models.FloatField(default=100)
