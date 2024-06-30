@@ -100,7 +100,7 @@ class UserDetails(APIView):
         try:
             user = User.objects.get(id=id)
             user.status = get_status_word(user.status, User.STATUS_TYPES)
-            user.gender = get_status_word(user.gender, User.STATUS_TYPES)
+            user.gender = get_status_word(user.gender, User.GENDER_TYPES)
         except User.DoesNotExist:
             return Response({"message": "User does not exist"}, status=404)
         serializer = PatientSerializer(user)
@@ -151,7 +151,7 @@ class ReserveClinicView(APIView):
 
 
 class DoctorChatDetails(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsDoctor]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, req):
 
