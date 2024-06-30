@@ -64,6 +64,7 @@ def ListRoomMessagesView(req, room_name):
 
     return Response({"data": serializer.data})
 
+
 class GetDoctorsNumber(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -74,13 +75,13 @@ class GetDoctorsNumber(APIView):
             return Response({"message": "there is no doctors "}, status=404)
 
         res=[]
-        for employee_id in employees:
-           res.append(User.objects.get(employee=employee_id))
-
+        for employee in employees:
+           res.append(User.objects.get(employee=employee))
 
         serializer = UserSerializer(res, many=True)
         return Response({"data": serializer.data, "count": len(serializer.data)}) 
     
+
 class GetPatiantNumber(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
