@@ -80,3 +80,17 @@ class GetDoctorsNumber(APIView):
 
         serializer = UserSerializer(res, many=True)
         return Response({"data": serializer.data, "count": len(serializer.data)}) 
+    
+class GetPatiantNumber(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, req):
+
+        users = User.objects.all()
+        res=[]
+        for user in users :
+            if  user.employee is None:
+                res.append(user)
+        serializer = UserSerializer(res, many=True)
+        return Response({"data": serializer.data, "count": len(serializer.data)}) 
+
