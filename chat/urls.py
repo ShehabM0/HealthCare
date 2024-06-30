@@ -8,6 +8,7 @@ urlpatterns = [
     path('list-room-messages/<str:room_name>/', ListRoomMessagesView, name='list-room-messages'),
     path('list-my-rooms/', ListRoomsView, name='list-all-user-rooms'),
     path('create-room/', CreateRoomView, name='create-new-room'),
-    path('Chat/Doctors/', views.GetDoctorsNumber.as_view(), name='GetDoctorsNumber'),
+    path('Doctors/', views.GetDoctorsNumber.as_view(), name='GetDoctorsNumber'),
+    path('Patiants/', views.GetPatiantNumber.as_view(), name='GetPatiantNumber'),
     path('ws/', wsTemplate)
 ]
