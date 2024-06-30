@@ -3,6 +3,7 @@ from doctors.models import Clinic
 
 class Employee(models.Model):
     USER_TYPES_DICT = {
+        'A': 'Admin',
         'D': 'Doctor',
         'N': 'Nurse',
         'H': 'Human Resources',
@@ -62,7 +63,9 @@ class Employee(models.Model):
         ('RadiationOncology', 'RadiationOncology'),
         ('Respirology', 'Respirology'),
         ('Rheumatology', 'Rheumatology'),
-        ('Urology', 'Urology'),
+        ('Urology', 'Urology'), 
+        ('Pharmacist', 'Pharmacist'),
+        ('Human Resources', 'Human Resources' ),
     ]
 
     type = models.CharField(max_length=2, choices=USER_TYPES, default='P')
