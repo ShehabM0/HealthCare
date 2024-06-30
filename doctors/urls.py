@@ -5,9 +5,10 @@ from .views import *
 app_name = 'doctors'
 
 urlpatterns = [
+    path('Chat/', DoctorChatDetails.as_view()),
     path('clinics/', ListAllClinics.as_view()),
     # path('clinic/<int:pk>/', ClinicView.as_view()),
-    # path('clinic/', AddClinicView.as_view()),
+    # path('Chat/', DoctorChatDetails.as_view()),
 
     path('reserve-clinic/', ReserveClinicView.as_view()),
     path('working-hours/<int:clinic_id>', GetClinicWorkingHours.as_view()),

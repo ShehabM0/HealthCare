@@ -7,6 +7,8 @@ from django.shortcuts import render
 from rest_framework import status
 from django.db.models import Q
 from .serializers import *
+from rest_framework import status, permissions
+from rest_framework.views import APIView
 
 def wsTemplate(req):
     return render(req, 'ws-conn-test.html')
@@ -61,3 +63,20 @@ def ListRoomMessagesView(req, room_name):
     serializer = ChatMessageSerializer(messages, many=True)
 
     return Response({"data": serializer.data})
+
+class GetDoctorsNumber(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, req):
+        try:
+            employees=Employee.objects.filter(type='D')
+        except employees.DoesNotExist:
+            return Response({"message": "there is no doctors "}, status=404)
+
+        res=[]
+        for employee_id in employees:
+           res.append(User.objects.get(employee=employee_id))
+
+
+        serializer = UserSerializer(res, many=True)
+        return Response({"data": serializer.data, "count": len(serializer.data)}) 

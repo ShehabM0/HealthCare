@@ -1,6 +1,7 @@
 from .models import ChatMessage, ChatRoom
 from rest_framework import serializers
-from patients.models import User
+from patients.models import *
+  
 
 class ChatUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,3 +18,15 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
         fields = ['sender', 'message', 'created_at']
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['id', 'type','clinic'] 
+
+
+class UserSerializer(serializers.ModelSerializer):
+    employee=EmployeeSerializer()
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name','employee']  
