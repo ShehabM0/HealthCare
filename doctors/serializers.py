@@ -69,13 +69,13 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         model = MedicalRecord
         exclude = ['patient']
 
-class ClinicSerializer(serializers.ModelSerializer):
+class ClinicChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Clinic
         fields = ['id','name']
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    clinic=ClinicSerializer()
+    clinic=ClinicChatSerializer()
     class Meta:
         model = Employee
         fields = ['id', 'type','clinic'] 
